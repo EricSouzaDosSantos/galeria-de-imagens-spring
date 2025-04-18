@@ -29,4 +29,8 @@ public class Imagens {
 
     @Column(name = "url_image")
     private String imageURL;
+
+    @ManyToOne
+    @JoinColumn(name = "album_id")
+    private Album album;
 }
