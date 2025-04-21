@@ -1,4 +1,4 @@
-package com.desafios.galeriaimagensspring.application.service;
+package com.desafios.galeriaimagensspring.domain.service;
 
 import com.desafios.galeriaimagensspring.domain.model.User;
 import com.desafios.galeriaimagensspring.domain.model.UserDetailsImpl;
