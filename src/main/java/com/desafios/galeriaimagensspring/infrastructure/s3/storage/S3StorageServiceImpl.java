@@ -5,6 +5,8 @@ import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.desafios.galeriaimagensspring.domain.exception.image.S3DeletingException;
 import com.desafios.galeriaimagensspring.domain.exception.image.S3UploadException;
 import com.desafios.galeriaimagensspring.domain.repository.StorageService;
+import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
@@ -13,16 +15,13 @@ import java.io.ByteArrayInputStream;
 import java.util.UUID;
 
 @Component
+@RequiredArgsConstructor
 public class S3StorageServiceImpl implements StorageService {
 
     private final AmazonS3 s3Client;
 
     @Value("${aws.s3.bucket-name}")
     private String bucketName;
-
-    public S3StorageServiceImpl(AmazonS3 s3Client) {
-        this.s3Client = s3Client;
-    }
 
     @Override
     public String upload(MultipartFile file) {
