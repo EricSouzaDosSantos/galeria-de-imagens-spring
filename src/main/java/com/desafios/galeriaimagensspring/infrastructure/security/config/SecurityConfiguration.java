@@ -28,7 +28,8 @@ public class SecurityConfiguration {
     };
 
     public static final String[] ENDPOINTS_WITH_AUTHENTICATION_REQUIRED = {
-            ""
+            "/api/v1/images/**",
+            "/api/v1/albums/**",
     };
 
     public static final String[] ENDPOINTS_VIEWER = {
@@ -46,6 +47,9 @@ public class SecurityConfiguration {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth ->
                         auth.requestMatchers(ENDPOINTS_WITH_AUTHENTICATION_NOT_REQUIRED).permitAll()
+                                .requestMatchers(ENDPOINTS_WITH_AUTHENTICATION_REQUIRED).authenticated()
+//                                .requestMatchers(ENDPOINTS_VIEWER).hasAnyRole("VIEWER")
+//                                .requestMatchers(ENDPOINTS_USER).hasAnyRole("USER")
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(userAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

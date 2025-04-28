@@ -42,7 +42,7 @@ public class UserAuthenticationFilter extends OncePerRequestFilter {
 
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }else {
-                throw new RuntimeException("O token está ausente");
+                throw new RuntimeException("token is missing");
             }
         }
         filterChain.doFilter(request, response);
