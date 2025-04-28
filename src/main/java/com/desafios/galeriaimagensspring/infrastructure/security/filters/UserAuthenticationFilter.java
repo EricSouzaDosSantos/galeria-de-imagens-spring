@@ -1,7 +1,7 @@
 package com.desafios.galeriaimagensspring.infrastructure.security.filters;
 
 import com.desafios.galeriaimagensspring.domain.model.User;
-import com.desafios.galeriaimagensspring.domain.model.UserDetailsImpl;
+import com.desafios.galeriaimagensspring.infrastructure.security.autentication.UserDetailsImpl;
 import com.desafios.galeriaimagensspring.domain.repository.UserRepository;
 import com.desafios.galeriaimagensspring.infrastructure.security.config.SecurityConfiguration;
 import com.desafios.galeriaimagensspring.infrastructure.security.autentication.JwtTokenService;

@@ -1,5 +1,6 @@
-package com.desafios.galeriaimagensspring.domain.model;
+package com.desafios.galeriaimagensspring.infrastructure.security.autentication;
 
+import com.desafios.galeriaimagensspring.domain.model.User;
 import com.desafios.galeriaimagensspring.domain.model.enums.UserRole;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
