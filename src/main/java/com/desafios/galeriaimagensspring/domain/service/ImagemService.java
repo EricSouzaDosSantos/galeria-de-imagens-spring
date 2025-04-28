@@ -2,16 +2,22 @@ package com.desafios.galeriaimagensspring.domain.service;
 
 import com.desafios.galeriaimagensspring.application.dto.GetImageDto;
 import com.desafios.galeriaimagensspring.application.dto.SaveImageDTO;
+import com.desafios.galeriaimagensspring.domain.exception.image.ImageNotFoundException;
+import com.desafios.galeriaimagensspring.domain.exception.user.UnauthorizedException;
 import com.desafios.galeriaimagensspring.domain.model.Imagens;
+import com.desafios.galeriaimagensspring.domain.model.User;
 import com.desafios.galeriaimagensspring.domain.repository.ImagensRepository;
 import com.desafios.galeriaimagensspring.usecase.image.delete.DeleteImageUseCase;
 import com.desafios.galeriaimagensspring.usecase.image.save.SaveImageUseCase;
 import com.desafios.galeriaimagensspring.usecase.image.update.UpdateImageUseCase;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -22,25 +28,36 @@ public class ImagemService {
     private final DeleteImageUseCase deleteImageUseCase;
     private final UpdateImageUseCase updateImageUseCase;
 
-    public Imagens saveImage(SaveImageDTO saveImageDTO, MultipartFile file) {
-        String imageURL = saveImageUseCase.execute(file);
+    public Imagens saveImage(SaveImageDTO saveImageDTO) {
+        String imageURL = saveImageUseCase.execute(saveImageDTO.image());
         Imagens imagem = new Imagens();
-        imagem.setName(file.getOriginalFilename());
+        imagem.setName((saveImageDTO.name() == null || saveImageDTO.name().isEmpty()) ? saveImageDTO.image().getOriginalFilename() : saveImageDTO.name());
         imagem.setDescription(saveImageDTO.description());
         imagem.setImageURL(imageURL);
         imagem.setAlternateText(saveImageDTO.alternateText());
         imagem.setAlbum(saveImageDTO.albums());
+        User userlogged = getAuthenticatedUser();
+        imagem.setUser(userlogged);
 
         return imagensRepository.save(imagem);
     }
 
     public void deleteImage(String imageURL) {
+        Imagens imagem = imagensRepository.findByImageURL(imageURL)
+                .orElseThrow(() -> new ImageNotFoundException("Image not found"));
+
+        validateUserAuthorization(imagem);
+
         deleteImageUseCase.execute(imageURL);
     }
 
     public Imagens updateImage(String oldImageUrl, MultipartFile file){
         String newImageUrl = updateImageUseCase.execute(oldImageUrl, file);
-        Imagens imagem = imagensRepository.findByImageURL(oldImageUrl);
+        Imagens imagem = imagensRepository.findByImageURL(oldImageUrl)
+                .orElseThrow(() -> new ImageNotFoundException("Image not found"));
+
+        validateUserAuthorization(imagem);
+
         imagem.setImageURL(newImageUrl);
         imagem.setName(file.getOriginalFilename());
         return imagensRepository.save(imagem);
@@ -48,6 +65,7 @@ public class ImagemService {
 
     public List<GetImageDto> findAllImages() {
         return imagensRepository.findAll().stream().map(imagem -> {
+            validateUserAuthorization(imagem);
             GetImageDto getImageDto = new GetImageDto(imagem.getName(),
                     imagem.getDescription(),
                     imagem.getCreationDate(),
@@ -58,12 +76,28 @@ public class ImagemService {
     }
 
     public GetImageDto findImageById(Long id) {
-        Imagens imagem = imagensRepository.findById(id).orElseThrow(() -> new RuntimeException("Image not found"));
+        Imagens imagem = imagensRepository.findById(id).orElseThrow(() -> new ImageNotFoundException("Image not found"));
+        validateUserAuthorization(imagem);
         return new GetImageDto(imagem.getName(),
                 imagem.getDescription(),
                 imagem.getCreationDate(),
                 imagem.getAlternateText(),
                 imagem.getImageURL());
+    }
+
+    public User getAuthenticatedUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new UnauthorizedException("unauthenticated user");
+        }
+        return (User) authentication.getPrincipal();
+    }
+
+    private void validateUserAuthorization(Imagens imagem) {
+        User userLogged = getAuthenticatedUser();
+        if (imagem.getUser().getId() != userLogged.getId()) {
+            throw new UnauthorizedException("User not authorized to delete this image");
+        }
     }
 
 
