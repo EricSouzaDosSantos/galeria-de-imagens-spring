@@ -33,10 +33,9 @@ public class S3StorageServiceImpl implements StorageService {
             metadata.setContentType(file.getContentType());
 
             s3Client.putObject(bucketName, fileName, file.getInputStream(), metadata);
-            return fileName;
-
+            return s3Client.getUrl(bucketName, fileName).toString();
         } catch (Exception e) {
-            throw new S3UploadException("Error uploading amazon s3: "+e);
+            throw new S3UploadException("Error uploading amazon s3: " + e);
         }
     }
 
@@ -56,6 +55,23 @@ public class S3StorageServiceImpl implements StorageService {
         metadata.setContentLength(0);
 
         s3Client.putObject(bucketName, folderKey, new ByteArrayInputStream(new byte[0]), metadata);
+    }
+
+    @Override
+    public String updateImage(String oldImageURL, MultipartFile multipartFile) {
+        String newFileName = UUID.randomUUID() + "_" + multipartFile.getOriginalFilename();
+
+        try {
+            ObjectMetadata metadata = new ObjectMetadata();
+            metadata.setContentLength(multipartFile.getSize());
+            metadata.setContentType(multipartFile.getContentType());
+
+            s3Client.putObject(bucketName, newFileName, multipartFile.getInputStream(), metadata);
+            delete(oldImageURL);
+            return s3Client.getUrl(bucketName, newFileName).toString();
+        } catch (Exception e) {
+            throw new S3UploadException("Error uploading amazon s3: "+e);
+        }
     }
 
 }
