@@ -6,5 +6,6 @@ public interface StorageService {
     String upload(MultipartFile file);
     void delete(String url);
     void createUserFolder(String folderName);
+    String updateImage(String oldImageURL, MultipartFile multipartFile);
 }
 
