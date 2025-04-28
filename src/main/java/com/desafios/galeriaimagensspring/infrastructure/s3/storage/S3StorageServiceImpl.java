@@ -2,10 +2,9 @@ package com.desafios.galeriaimagensspring.infrastructure.s3.storage;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.desafios.galeriaimagensspring.domain.exception.image.S3DeletingException;
-import com.desafios.galeriaimagensspring.domain.exception.image.S3UploadException;
+import com.desafios.galeriaimagensspring.infrastructure.s3.exceptions.image.S3DeletingException;
+import com.desafios.galeriaimagensspring.infrastructure.s3.exceptions.image.S3UploadException;
 import com.desafios.galeriaimagensspring.domain.repository.StorageService;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
