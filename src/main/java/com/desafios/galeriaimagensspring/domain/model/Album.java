@@ -16,8 +16,10 @@ public class Album {
     @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false)
-    @OneToMany(mappedBy = "album", cascade = CascadeType.ALL)
+    @ManyToMany(mappedBy = "album", cascade = CascadeType.ALL)
     private List<Imagens> imagens;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 }

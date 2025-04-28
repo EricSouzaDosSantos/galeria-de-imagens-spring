@@ -5,6 +5,7 @@ import lombok.Data;
 import org.springframework.data.annotation.CreatedDate;
 
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Data
@@ -14,11 +15,11 @@ public class Imagens {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(name = "description_image")
-    private String descriptionImage;
+    @Column(name = "description")
+    private String description;
 
     @Column(nullable = false)
-    private String nameImage;
+    private String name;
 
     @Column(name = "creation_date", nullable = false)
     @CreatedDate
@@ -30,7 +31,13 @@ public class Imagens {
     @Column(name = "url_image")
     private String imageURL;
 
+    @ManyToMany
+    @JoinTable(name = "album_images",
+            joinColumns = @JoinColumn(name = "image_id"),
+            inverseJoinColumns = @JoinColumn(name = "album_id"))
+    private List<Album> album;
+
     @ManyToOne
-    @JoinColumn(name = "album_id")
-    private Album album;
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 }
