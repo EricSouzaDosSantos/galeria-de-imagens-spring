@@ -1,4 +1,4 @@
-package com.desafios.galeriaimagensspring.domain.exception.image;
+package com.desafios.galeriaimagensspring.infrastructure.s3.exceptions.image;
 
 public class S3UploadException extends RuntimeException {
 
