@@ -1,5 +1,8 @@
 package com.desafios.galeriaimagensspring.domain.service;
 
+import com.desafios.galeriaimagensspring.domain.exception.user.UnauthorizedException;
+import com.desafios.galeriaimagensspring.domain.exception.user.UserNotFoundException;
+import com.desafios.galeriaimagensspring.domain.model.Imagens;
 import com.desafios.galeriaimagensspring.domain.model.User;
 import com.desafios.galeriaimagensspring.infrastructure.security.autentication.UserDetailsImpl;
 import com.desafios.galeriaimagensspring.domain.repository.UserRepository;
@@ -8,11 +11,13 @@ import com.desafios.galeriaimagensspring.infrastructure.security.config.Security
 import com.desafios.galeriaimagensspring.infrastructure.security.dtos.LoginUserDTO;
 import com.desafios.galeriaimagensspring.infrastructure.security.dtos.RecoveryJwtTokenDTO;
 import com.desafios.galeriaimagensspring.infrastructure.security.dtos.RegisterUserDTO;
+import com.desafios.galeriaimagensspring.usecase.user.save.CreateUserFolderUseCase;
 import lombok.AllArgsConstructor;
 
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -26,6 +31,8 @@ public class UserService {
     private final UserRepository userRepository;
 
     private final SecurityConfiguration securityConfiguration;
+
+    private final CreateUserFolderUseCase createUserFolderUseCase;
 
     public RecoveryJwtTokenDTO authenticateUser(LoginUserDTO loginUserDTO){
         UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
@@ -47,5 +54,7 @@ public class UserService {
                 .userRole(registerUserDTO.role())
                 .build();
         userRepository.save(newUser);
+        createUserFolderUseCase.execute(registerUserDTO.email());
     }
+
 }
