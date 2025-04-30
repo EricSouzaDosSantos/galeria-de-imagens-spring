@@ -52,9 +52,13 @@ public class UserAuthenticationFilter extends OncePerRequestFilter {
     private String recoveryToken(HttpServletRequest request) {
         String token = request.getHeader("Authorization");
         if (token != null) {
-            return token.replace("Bearer ", "");
+            return token.replace("Bearer ", "").trim();
+        }else {
+            throw new RuntimeException("Malformed JWT token");
         }
-        return null;
+
+//        throw new RuntimeException("Authorization header is missing or invalid");
+//        return null;
     }
 
     private boolean checkIfEndpointIsNotPublic(HttpServletRequest request){
