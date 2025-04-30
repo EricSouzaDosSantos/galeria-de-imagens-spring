@@ -2,10 +2,10 @@ package com.desafios.galeriaimagensspring.interfaces.controller;
 
 import com.desafios.galeriaimagensspring.application.dto.GetImageDto;
 import com.desafios.galeriaimagensspring.application.dto.SaveImageDTO;
-import com.desafios.galeriaimagensspring.domain.model.Album;
 import com.desafios.galeriaimagensspring.domain.model.Imagens;
 import com.desafios.galeriaimagensspring.domain.service.ImagemService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -17,6 +17,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ImageController {
 
+    @Autowired
     private final ImagemService imagemService;
 
     @PostMapping(consumes = "multipart/form-data")
@@ -24,10 +25,9 @@ public class ImageController {
             @RequestPart("image") MultipartFile image,
             @RequestPart("alternateText") String alternateText,
             @RequestPart(value = "name", required = false) String name,
-            @RequestPart(value = "description", required = false) String description,
-            @RequestPart(value = "albums", required = false) List<Album> albums) {
+            @RequestPart(value = "description", required = false) String description) {
 
-        SaveImageDTO saveImageDTO = new SaveImageDTO(name, description, alternateText, image, albums);
+        SaveImageDTO saveImageDTO = new SaveImageDTO(name, description, alternateText, image);
         Imagens savedImage = imagemService.saveImage(saveImageDTO);
         return ResponseEntity.status(201).body(savedImage);
     }

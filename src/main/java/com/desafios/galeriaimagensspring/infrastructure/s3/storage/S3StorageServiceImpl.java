@@ -1,7 +1,6 @@
 package com.desafios.galeriaimagensspring.infrastructure.s3.storage;
 
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.ObjectMetadata;
+
 import com.desafios.galeriaimagensspring.infrastructure.s3.exceptions.image.S3DeletingException;
 import com.desafios.galeriaimagensspring.infrastructure.s3.exceptions.image.S3UploadException;
 import com.desafios.galeriaimagensspring.domain.repository.StorageService;
@@ -9,30 +8,34 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.io.ByteArrayInputStream;
+import software.amazon.awssdk.core.sync.RequestBody;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
 public class S3StorageServiceImpl implements StorageService {
 
-    private final AmazonS3 s3Client;
+    private final S3Client s3Client;
 
     @Value("${aws.s3.bucket-name}")
     private String bucketName;
 
     @Override
-    public String upload(MultipartFile file) {
-        String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
+    public String upload(MultipartFile file, String folderName) {
+        String fileName = folderName + "/"+ UUID.randomUUID() + "_" + file.getOriginalFilename();
 
         try {
-            ObjectMetadata metadata = new ObjectMetadata();
-            metadata.setContentLength(file.getSize());
-            metadata.setContentType(file.getContentType());
 
-            s3Client.putObject(bucketName, fileName, file.getInputStream(), metadata);
-            return s3Client.getUrl(bucketName, fileName).toString();
+            PutObjectRequest putObjectRequest = PutObjectRequest.builder()
+                    .bucket(bucketName)
+                    .key(fileName)
+                    .build();
+
+            s3Client.putObject(putObjectRequest, RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
+            return String.format("https://%s.s3.amazonaws.com/user/%s/%s", bucketName, folderName,  fileName);
         } catch (Exception e) {
             throw new S3UploadException("Error uploading amazon s3: " + e);
         }
@@ -41,7 +44,12 @@ public class S3StorageServiceImpl implements StorageService {
     @Override
     public void delete(String url) {
         try {
-            s3Client.deleteObject(bucketName, url);
+            DeleteObjectRequest deleteRequest = DeleteObjectRequest.builder()
+                    .bucket(bucketName)
+                    .key(url)
+                    .build();
+
+            s3Client.deleteObject(deleteRequest);
         } catch (Exception e) {
             throw new S3DeletingException("Error deleting image for s3: "+ e);
         }
@@ -49,25 +57,35 @@ public class S3StorageServiceImpl implements StorageService {
 
     @Override
     public void createUserFolder(String folderName) {
-        String folderKey = folderName.endsWith("/") ? folderName : folderName + "/";
-        ObjectMetadata metadata = new ObjectMetadata();
-        metadata.setContentLength(0);
+        String folderStart = folderName.startsWith("user/") ? folderName : "user/" + folderName;
+        String folderKey = folderStart.endsWith("/") ? folderName : folderName + "/";
 
-        s3Client.putObject(bucketName, folderKey, new ByteArrayInputStream(new byte[0]), metadata);
+        try {
+            PutObjectRequest putObjectRequest = PutObjectRequest.builder()
+                    .bucket(bucketName)
+                    .key(folderKey)
+                    .contentLength(0L)
+                    .build();
+
+            s3Client.putObject(putObjectRequest, RequestBody.fromBytes(new byte[0]));
+        } catch (Exception e) {
+            throw new S3UploadException("Error creating folder in S3: " + e);
+        }
     }
 
     @Override
-    public String updateImage(String oldImageURL, MultipartFile multipartFile) {
-        String newFileName = UUID.randomUUID() + "_" + multipartFile.getOriginalFilename();
+    public String updateImage(String oldImageURL, MultipartFile file) {
+        String newFileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
 
         try {
-            ObjectMetadata metadata = new ObjectMetadata();
-            metadata.setContentLength(multipartFile.getSize());
-            metadata.setContentType(multipartFile.getContentType());
+            PutObjectRequest putObjectRequest = PutObjectRequest.builder()
+                    .bucket(bucketName)
+                    .key(newFileName)
+                    .build();
 
-            s3Client.putObject(bucketName, newFileName, multipartFile.getInputStream(), metadata);
+            s3Client.putObject(putObjectRequest, RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
             delete(oldImageURL);
-            return s3Client.getUrl(bucketName, newFileName).toString();
+            return String.format("https://%s.s3.amazonaws.com/%s", bucketName, newFileName);
         } catch (Exception e) {
             throw new S3UploadException("Error uploading amazon s3: "+e);
         }
