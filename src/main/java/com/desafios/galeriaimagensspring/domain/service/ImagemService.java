@@ -4,20 +4,23 @@ import com.desafios.galeriaimagensspring.application.dto.GetImageDto;
 import com.desafios.galeriaimagensspring.application.dto.SaveImageDTO;
 import com.desafios.galeriaimagensspring.domain.exception.image.ImageNotFoundException;
 import com.desafios.galeriaimagensspring.domain.exception.user.UnauthorizedException;
+import com.desafios.galeriaimagensspring.domain.exception.user.UserNotFoundException;
 import com.desafios.galeriaimagensspring.domain.model.Imagens;
 import com.desafios.galeriaimagensspring.domain.model.User;
 import com.desafios.galeriaimagensspring.domain.repository.ImagensRepository;
+import com.desafios.galeriaimagensspring.domain.repository.UserRepository;
 import com.desafios.galeriaimagensspring.usecase.image.delete.DeleteImageUseCase;
 import com.desafios.galeriaimagensspring.usecase.image.save.SaveImageUseCase;
 import com.desafios.galeriaimagensspring.usecase.image.update.UpdateImageUseCase;
+import com.desafios.galeriaimagensspring.usecase.user.save.CreateUserFolderUseCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -27,15 +30,18 @@ public class ImagemService {
     private final SaveImageUseCase saveImageUseCase;
     private final DeleteImageUseCase deleteImageUseCase;
     private final UpdateImageUseCase updateImageUseCase;
+    private final UserRepository userRepository;
+    private final CreateUserFolderUseCase createUserFolderUseCase;
 
     public Imagens saveImage(SaveImageDTO saveImageDTO) {
-        String imageURL = saveImageUseCase.execute(saveImageDTO.image());
+        String imageURL = saveImageUseCase.execute(saveImageDTO.image(), getAuthenticatedUser().getEmail());
         Imagens imagem = new Imagens();
         imagem.setName((saveImageDTO.name() == null || saveImageDTO.name().isEmpty()) ? saveImageDTO.image().getOriginalFilename() : saveImageDTO.name());
         imagem.setDescription(saveImageDTO.description());
         imagem.setImageURL(imageURL);
         imagem.setAlternateText(saveImageDTO.alternateText());
-        imagem.setAlbum(saveImageDTO.albums());
+        imagem.setCreationDate(new Date());
+//        imagem.setAlbum(saveImageDTO.albums());
         User userlogged = getAuthenticatedUser();
         imagem.setUser(userlogged);
 
@@ -87,10 +93,11 @@ public class ImagemService {
 
     public User getAuthenticatedUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || !authentication.isAuthenticated()) {
+        if (authentication == null || !(authentication.isAuthenticated())) {
             throw new UnauthorizedException("unauthenticated user");
         }
-        return (User) authentication.getPrincipal();
+        User user = userRepository.findByEmail((String) authentication.getPrincipal()).orElseThrow(() -> new UserNotFoundException("User not found"));
+        return user;
     }
 
     private void validateUserAuthorization(Imagens imagem) {
