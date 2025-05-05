@@ -103,7 +103,7 @@ public class ImagemService {
     private void validateUserAuthorization(Imagens imagem) {
         User userLogged = getAuthenticatedUser();
         if (imagem.getUser().getId() != userLogged.getId()) {
-            throw new UnauthorizedException("User not authorized to delete this image");
+            throw new UnauthorizedException("User not authorized to access this image");
         }
     }
 
