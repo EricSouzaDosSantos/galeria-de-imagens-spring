@@ -1,6 +1,6 @@
 package com.desafios.galeriaimagensspring.interfaces.controller;
 
-import com.desafios.galeriaimagensspring.domain.service.UserService;
+import com.desafios.galeriaimagensspring.application.service.UserService;
 import com.desafios.galeriaimagensspring.infrastructure.security.dtos.LoginUserDTO;
 import com.desafios.galeriaimagensspring.infrastructure.security.dtos.RecoveryJwtTokenDTO;
 import com.desafios.galeriaimagensspring.infrastructure.security.dtos.RegisterUserDTO;

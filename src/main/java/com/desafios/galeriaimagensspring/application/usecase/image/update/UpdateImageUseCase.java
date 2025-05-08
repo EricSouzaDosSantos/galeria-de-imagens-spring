@@ -1,4 +1,4 @@
-package com.desafios.galeriaimagensspring.usecase.image.update;
+package com.desafios.galeriaimagensspring.application.usecase.image.update;
 
 import org.springframework.web.multipart.MultipartFile;
 

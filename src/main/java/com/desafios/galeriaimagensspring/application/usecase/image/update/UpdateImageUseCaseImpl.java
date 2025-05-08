@@ -1,8 +1,7 @@
-package com.desafios.galeriaimagensspring.usecase.image.update;
+package com.desafios.galeriaimagensspring.application.usecase.image.update;
 
 import com.desafios.galeriaimagensspring.infrastructure.s3.storage.S3StorageServiceImpl;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.sql.Update;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 

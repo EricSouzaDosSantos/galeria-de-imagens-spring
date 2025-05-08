@@ -1,4 +1,4 @@
-package com.desafios.galeriaimagensspring.domain.repository;
+package com.desafios.galeriaimagensspring.domain.service;
 
 import org.springframework.web.multipart.MultipartFile;
 

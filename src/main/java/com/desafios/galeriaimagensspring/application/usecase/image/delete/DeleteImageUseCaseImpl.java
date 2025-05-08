@@ -1,11 +1,8 @@
-package com.desafios.galeriaimagensspring.usecase.image.delete;
+package com.desafios.galeriaimagensspring.application.usecase.image.delete;
 
-import com.desafios.galeriaimagensspring.domain.repository.ImagensRepository;
-import com.desafios.galeriaimagensspring.domain.repository.StorageService;
-import lombok.AllArgsConstructor;
+import com.desafios.galeriaimagensspring.domain.service.StorageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Repository;
 
 @Component
 @RequiredArgsConstructor

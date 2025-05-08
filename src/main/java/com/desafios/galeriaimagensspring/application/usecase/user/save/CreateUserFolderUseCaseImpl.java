@@ -1,6 +1,6 @@
-package com.desafios.galeriaimagensspring.usecase.user.save;
+package com.desafios.galeriaimagensspring.application.usecase.user.save;
 
-import com.desafios.galeriaimagensspring.domain.repository.StorageService;
+import com.desafios.galeriaimagensspring.domain.service.StorageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

@@ -1,4 +1,4 @@
-package com.desafios.galeriaimagensspring.domain.service;
+package com.desafios.galeriaimagensspring.application.service;
 
 import com.desafios.galeriaimagensspring.application.dto.GetImageDto;
 import com.desafios.galeriaimagensspring.application.dto.SaveImageDTO;
@@ -9,10 +9,10 @@ import com.desafios.galeriaimagensspring.domain.model.Imagens;
 import com.desafios.galeriaimagensspring.domain.model.User;
 import com.desafios.galeriaimagensspring.domain.repository.ImagensRepository;
 import com.desafios.galeriaimagensspring.domain.repository.UserRepository;
-import com.desafios.galeriaimagensspring.usecase.image.delete.DeleteImageUseCase;
-import com.desafios.galeriaimagensspring.usecase.image.save.SaveImageUseCase;
-import com.desafios.galeriaimagensspring.usecase.image.update.UpdateImageUseCase;
-import com.desafios.galeriaimagensspring.usecase.user.save.CreateUserFolderUseCase;
+import com.desafios.galeriaimagensspring.application.usecase.image.delete.DeleteImageUseCase;
+import com.desafios.galeriaimagensspring.application.usecase.image.save.SaveImageUseCase;
+import com.desafios.galeriaimagensspring.application.usecase.image.update.UpdateImageUseCase;
+import com.desafios.galeriaimagensspring.application.usecase.user.save.CreateUserFolderUseCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;

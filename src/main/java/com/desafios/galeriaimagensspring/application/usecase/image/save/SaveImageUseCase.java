@@ -1,4 +1,4 @@
-package com.desafios.galeriaimagensspring.usecase.image.save;
+package com.desafios.galeriaimagensspring.application.usecase.image.save;
 
 import org.springframework.web.multipart.MultipartFile;
 
