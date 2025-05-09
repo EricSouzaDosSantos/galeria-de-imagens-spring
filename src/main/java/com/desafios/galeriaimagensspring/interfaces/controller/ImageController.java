@@ -1,7 +1,7 @@
 package com.desafios.galeriaimagensspring.interfaces.controller;
 
-import com.desafios.galeriaimagensspring.application.dto.GetImageDto;
-import com.desafios.galeriaimagensspring.application.dto.SaveImageDTO;
+import com.desafios.galeriaimagensspring.application.dto.imagens.GetImageDto;
+import com.desafios.galeriaimagensspring.application.dto.imagens.SaveImageDTO;
 import com.desafios.galeriaimagensspring.domain.model.Imagens;
 import com.desafios.galeriaimagensspring.application.service.ImagemService;
 import io.swagger.v3.oas.annotations.Operation;

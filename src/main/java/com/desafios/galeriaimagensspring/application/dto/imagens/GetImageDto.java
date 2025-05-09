@@ -1,4 +1,4 @@
-package com.desafios.galeriaimagensspring.application.dto;
+package com.desafios.galeriaimagensspring.application.dto.imagens;
 
 import java.util.Date;
 

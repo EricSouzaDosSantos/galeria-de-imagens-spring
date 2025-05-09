@@ -1,5 +1,6 @@
 package com.desafios.galeriaimagensspring.application.service;
 
+import com.desafios.galeriaimagensspring.application.dto.albums.SaveAlbumDto;
 import com.desafios.galeriaimagensspring.domain.model.Album;
 import com.desafios.galeriaimagensspring.domain.repository.AlbumRepository;
 import com.desafios.galeriaimagensspring.domain.service.AlbumService;
@@ -16,13 +17,16 @@ public class AlbumServiceImpl implements AlbumService {
     private final AlbumRepository albumRepository;
 
     @Override
-    public Album createAlbum(Album album) {
+    public Album createAlbum(SaveAlbumDto albumDto) {
+        Album album = new Album();
+        album.setName(albumDto.name());
+        album.setImagens(albumDto.imagensList());
         return albumRepository.save(album);
     }
 
     @Override
-    public List<Album> getAllAlbums() {
-        return albumRepository.findAll();
+    public List<SaveAlbumDto> getAllAlbums() {
+        return albumRepository.findAll().stream().map(album -> new SaveAlbumDto(album.getName(), album.getImagens())).toList();
     }
 
     @Override
@@ -31,12 +35,12 @@ public class AlbumServiceImpl implements AlbumService {
     }
 
     @Override
-    public Album updateAlbum(Long id, Album updatedAlbum) {
+    public Album updateAlbum(Long id, SaveAlbumDto updatedAlbum) {
         Album existingAlbum = albumRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Album not found"));
 
-        existingAlbum.setName(updatedAlbum.getName());
-        existingAlbum.setImagens(updatedAlbum.getImagens());
+        existingAlbum.setName(updatedAlbum.name());
+        existingAlbum.setImagens(updatedAlbum.imagensList());
         return albumRepository.save(existingAlbum);
     }
 

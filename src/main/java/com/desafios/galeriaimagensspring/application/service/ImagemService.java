@@ -1,7 +1,7 @@
 package com.desafios.galeriaimagensspring.application.service;
 
-import com.desafios.galeriaimagensspring.application.dto.GetImageDto;
-import com.desafios.galeriaimagensspring.application.dto.SaveImageDTO;
+import com.desafios.galeriaimagensspring.application.dto.imagens.GetImageDto;
+import com.desafios.galeriaimagensspring.application.dto.imagens.SaveImageDTO;
 import com.desafios.galeriaimagensspring.domain.exception.image.ImageNotFoundException;
 import com.desafios.galeriaimagensspring.domain.exception.user.UnauthorizedException;
 import com.desafios.galeriaimagensspring.domain.exception.user.UserNotFoundException;
