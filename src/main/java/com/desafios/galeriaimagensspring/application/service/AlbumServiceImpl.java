@@ -1,6 +1,7 @@
 package com.desafios.galeriaimagensspring.application.service;
 
 import com.desafios.galeriaimagensspring.application.dto.albums.SaveAlbumDto;
+import com.desafios.galeriaimagensspring.domain.exception.album.AlbumNotFoundException;
 import com.desafios.galeriaimagensspring.domain.model.Album;
 import com.desafios.galeriaimagensspring.domain.repository.AlbumRepository;
 import com.desafios.galeriaimagensspring.domain.service.AlbumService;
@@ -17,11 +18,12 @@ public class AlbumServiceImpl implements AlbumService {
     private final AlbumRepository albumRepository;
 
     @Override
-    public Album createAlbum(SaveAlbumDto albumDto) {
+    public SaveAlbumDto createAlbum(SaveAlbumDto albumDto) {
         Album album = new Album();
         album.setName(albumDto.name());
         album.setImagens(albumDto.imagensList());
-        return albumRepository.save(album);
+        albumRepository.save(album);
+        return albumDto;
     }
 
     @Override
@@ -30,18 +32,22 @@ public class AlbumServiceImpl implements AlbumService {
     }
 
     @Override
-    public Optional<Album> getAlbumById(Long id) {
-        return albumRepository.findById(id);
+    public Optional<SaveAlbumDto> getAlbumById(Long id) {
+        return Optional.ofNullable(albumRepository.findById(id).map(album ->
+                        new SaveAlbumDto(album.getName(),
+                                album.getImagens()))
+                .orElseThrow(() -> new AlbumNotFoundException("Album not found")));
     }
 
     @Override
-    public Album updateAlbum(Long id, SaveAlbumDto updatedAlbum) {
+    public SaveAlbumDto updateAlbum(Long id, SaveAlbumDto updatedAlbum) {
         Album existingAlbum = albumRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Album not found"));
 
         existingAlbum.setName(updatedAlbum.name());
         existingAlbum.setImagens(updatedAlbum.imagensList());
-        return albumRepository.save(existingAlbum);
+        albumRepository.save(existingAlbum);
+        return updatedAlbum;
     }
 
     @Override

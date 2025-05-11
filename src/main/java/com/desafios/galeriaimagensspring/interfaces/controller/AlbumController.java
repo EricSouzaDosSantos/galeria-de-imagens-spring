@@ -30,8 +30,8 @@ public class AlbumController {
             @ApiResponse(responseCode = "400", description = "Invalid input", content = @Content)
     })
     @PostMapping
-    public ResponseEntity<Album> createAlbum(@RequestBody SaveAlbumDto album) {
-        Album createdAlbum = albumService.createAlbum(album);
+    public ResponseEntity<SaveAlbumDto> createAlbum(@RequestBody SaveAlbumDto album) {
+        SaveAlbumDto createdAlbum = albumService.createAlbum(album);
         return ResponseEntity.status(201).body(createdAlbum);
     }
 
@@ -50,7 +50,7 @@ public class AlbumController {
             @ApiResponse(responseCode = "404", description = "Album not found", content = @Content)
     })
     @GetMapping("/{id}")
-    public ResponseEntity<Album> getAlbumById(@PathVariable Long id) {
+    public ResponseEntity<SaveAlbumDto> getAlbumById(@PathVariable Long id) {
         return albumService.getAlbumById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
@@ -63,8 +63,8 @@ public class AlbumController {
             @ApiResponse(responseCode = "404", description = "Album not found", content = @Content)
     })
     @PutMapping("/{id}")
-    public ResponseEntity<Album> updateAlbum(@PathVariable Long id, @RequestBody SaveAlbumDto album) {
-        Album updated = albumService.updateAlbum(id, album);
+    public ResponseEntity<SaveAlbumDto> updateAlbum(@PathVariable Long id, @RequestBody SaveAlbumDto album) {
+        SaveAlbumDto updated = albumService.updateAlbum(id, album);
         return ResponseEntity.ok(updated);
     }
 
