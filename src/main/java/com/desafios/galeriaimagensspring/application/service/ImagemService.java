@@ -1,14 +1,14 @@
 package com.desafios.galeriaimagensspring.application.service;
 
-import com.desafios.galeriaimagensspring.application.dto.imagens.GetImageDto;
-import com.desafios.galeriaimagensspring.application.dto.imagens.SaveImageDTO;
-import com.desafios.galeriaimagensspring.domain.exception.image.ImageNotFoundException;
-import com.desafios.galeriaimagensspring.domain.exception.user.UnauthorizedException;
-import com.desafios.galeriaimagensspring.domain.exception.user.UserNotFoundException;
-import com.desafios.galeriaimagensspring.domain.model.Imagens;
-import com.desafios.galeriaimagensspring.domain.model.User;
-import com.desafios.galeriaimagensspring.domain.repository.ImagensRepository;
-import com.desafios.galeriaimagensspring.domain.repository.UserRepository;
+import com.desafios.galeriaimagensspring.interfaces.dto.imagens.GetImageDto;
+import com.desafios.galeriaimagensspring.interfaces.dto.imagens.SaveImageDTO;
+import com.desafios.galeriaimagensspring.application.exception.image.ImageNotFoundException;
+import com.desafios.galeriaimagensspring.application.exception.user.UnauthorizedException;
+import com.desafios.galeriaimagensspring.application.exception.user.UserNotFoundException;
+import com.desafios.galeriaimagensspring.infrastructure.persistence.entity.ImagemEntity;
+import com.desafios.galeriaimagensspring.infrastructure.persistence.entity.User;
+import com.desafios.galeriaimagensspring.infrastructure.persistence.repository.ImagensRepository;
+import com.desafios.galeriaimagensspring.infrastructure.persistence.repository.UserRepository;
 import com.desafios.galeriaimagensspring.application.usecase.image.delete.DeleteImageUseCase;
 import com.desafios.galeriaimagensspring.application.usecase.image.save.SaveImageUseCase;
 import com.desafios.galeriaimagensspring.application.usecase.image.update.UpdateImageUseCase;
@@ -33,9 +33,9 @@ public class ImagemService {
     private final UserRepository userRepository;
     private final CreateUserFolderUseCase createUserFolderUseCase;
 
-    public Imagens saveImage(SaveImageDTO saveImageDTO) {
+    public ImagemEntity saveImage(SaveImageDTO saveImageDTO) {
         String imageURL = saveImageUseCase.execute(saveImageDTO.image(), getAuthenticatedUser().getEmail());
-        Imagens imagem = new Imagens();
+        ImagemEntity imagem = new ImagemEntity();
         imagem.setName((saveImageDTO.name() == null || saveImageDTO.name().isEmpty()) ? saveImageDTO.image().getOriginalFilename() : saveImageDTO.name());
         imagem.setDescription(saveImageDTO.description());
         imagem.setImageURL(imageURL);
@@ -49,7 +49,7 @@ public class ImagemService {
     }
 
     public void deleteImage(String imageURL) {
-        Imagens imagem = imagensRepository.findByImageURL(imageURL)
+        ImagemEntity imagem = imagensRepository.findByImageURL(imageURL)
                 .orElseThrow(() -> new ImageNotFoundException("Image not found"));
 
         validateUserAuthorization(imagem);
@@ -57,9 +57,9 @@ public class ImagemService {
         deleteImageUseCase.execute(imageURL);
     }
 
-    public Imagens updateImage(String oldImageUrl, MultipartFile file){
+    public ImagemEntity updateImage(String oldImageUrl, MultipartFile file){
         String newImageUrl = updateImageUseCase.execute(oldImageUrl, file);
-        Imagens imagem = imagensRepository.findByImageURL(oldImageUrl)
+        ImagemEntity imagem = imagensRepository.findByImageURL(oldImageUrl)
                 .orElseThrow(() -> new ImageNotFoundException("Image not found"));
 
         validateUserAuthorization(imagem);
@@ -82,7 +82,7 @@ public class ImagemService {
     }
 
     public GetImageDto findImageById(Long id) {
-        Imagens imagem = imagensRepository.findById(id).orElseThrow(() -> new ImageNotFoundException("Image not found"));
+        ImagemEntity imagem = imagensRepository.findById(id).orElseThrow(() -> new ImageNotFoundException("Image not found"));
         validateUserAuthorization(imagem);
         return new GetImageDto(imagem.getName(),
                 imagem.getDescription(),
@@ -100,7 +100,7 @@ public class ImagemService {
         return user;
     }
 
-    private void validateUserAuthorization(Imagens imagem) {
+    private void validateUserAuthorization(ImagemEntity imagem) {
         User userLogged = getAuthenticatedUser();
         if (imagem.getUser().getId() != userLogged.getId()) {
             throw new UnauthorizedException("User not authorized to access this image");

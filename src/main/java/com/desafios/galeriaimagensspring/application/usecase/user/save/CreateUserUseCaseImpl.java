@@ -1,7 +1,7 @@
 package com.desafios.galeriaimagensspring.application.usecase.user.save;
 
-import com.desafios.galeriaimagensspring.domain.model.User;
-import com.desafios.galeriaimagensspring.domain.repository.UserRepository;
+import com.desafios.galeriaimagensspring.infrastructure.persistence.entity.User;
+import com.desafios.galeriaimagensspring.infrastructure.persistence.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

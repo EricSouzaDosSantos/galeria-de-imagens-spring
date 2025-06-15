@@ -1,8 +1,8 @@
 package com.desafios.galeriaimagensspring.interfaces.controller;
 
-import com.desafios.galeriaimagensspring.application.dto.imagens.GetImageDto;
-import com.desafios.galeriaimagensspring.application.dto.imagens.SaveImageDTO;
-import com.desafios.galeriaimagensspring.domain.model.Imagens;
+import com.desafios.galeriaimagensspring.interfaces.dto.imagens.GetImageDto;
+import com.desafios.galeriaimagensspring.interfaces.dto.imagens.SaveImageDTO;
+import com.desafios.galeriaimagensspring.infrastructure.persistence.entity.ImagemEntity;
 import com.desafios.galeriaimagensspring.application.service.ImagemService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -40,14 +40,14 @@ public class ImageController {
             }
     )
     @PostMapping(consumes = "multipart/form-data")
-    public ResponseEntity<Imagens> saveImage(
+    public ResponseEntity<ImagemEntity> saveImage(
             @RequestPart("image") MultipartFile image,
             @RequestPart("alternateText") String alternateText,
             @RequestPart(value = "name", required = false) String name,
             @RequestPart(value = "description", required = false) String description) {
 
         SaveImageDTO saveImageDTO = new SaveImageDTO(name, description, alternateText, image);
-        Imagens savedImage = imagemService.saveImage(saveImageDTO);
+        ImagemEntity savedImage = imagemService.saveImage(saveImageDTO);
         return ResponseEntity.status(201).body(savedImage);
     }
 
@@ -80,7 +80,7 @@ public class ImageController {
             requestBody = @RequestBody(
                     content = @Content(
                             mediaType = "multipart/form-data",
-                            schema = @Schema(implementation = Imagens.class)
+                            schema = @Schema(implementation = ImagemEntity.class)
                     )
             ),
             responses = {
@@ -92,8 +92,8 @@ public class ImageController {
             }
     )
     @PutMapping("/{oldImageUrl}")
-    public ResponseEntity<Imagens> updateImage(@PathVariable String oldImageUrl, @RequestPart MultipartFile image) {
-        Imagens updatedImage = imagemService.updateImage(oldImageUrl, image);
+    public ResponseEntity<ImagemEntity> updateImage(@PathVariable String oldImageUrl, @RequestPart MultipartFile image) {
+        ImagemEntity updatedImage = imagemService.updateImage(oldImageUrl, image);
         return ResponseEntity.ok(updatedImage);
     }
 

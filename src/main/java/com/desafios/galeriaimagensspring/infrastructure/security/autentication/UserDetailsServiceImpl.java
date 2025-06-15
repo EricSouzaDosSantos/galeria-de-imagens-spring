@@ -1,7 +1,7 @@
 package com.desafios.galeriaimagensspring.infrastructure.security.autentication;
 
-import com.desafios.galeriaimagensspring.domain.model.User;
-import com.desafios.galeriaimagensspring.domain.repository.UserRepository;
+import com.desafios.galeriaimagensspring.infrastructure.persistence.entity.User;
+import com.desafios.galeriaimagensspring.infrastructure.persistence.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

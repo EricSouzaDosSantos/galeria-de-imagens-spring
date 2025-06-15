@@ -1,8 +1,8 @@
 package com.desafios.galeriaimagensspring.interfaces.controller;
 
-import com.desafios.galeriaimagensspring.application.dto.albums.SaveAlbumDto;
-import com.desafios.galeriaimagensspring.domain.model.Album;
-import com.desafios.galeriaimagensspring.domain.service.AlbumService;
+import com.desafios.galeriaimagensspring.interfaces.dto.albums.SaveAlbumDto;
+import com.desafios.galeriaimagensspring.core.service.AlbumService;
+import com.desafios.galeriaimagensspring.infrastructure.persistence.entity.AlbumEntity;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -26,7 +26,7 @@ public class AlbumController {
     @Operation(summary = "Create a new album")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Album created successfully",
-                    content = @Content(schema = @Schema(implementation = Album.class))),
+                    content = @Content(schema = @Schema(implementation = AlbumEntity.class))),
             @ApiResponse(responseCode = "400", description = "Invalid input", content = @Content)
     })
     @PostMapping
@@ -46,7 +46,7 @@ public class AlbumController {
     @Operation(summary = "Get an album by ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Album found",
-                    content = @Content(schema = @Schema(implementation = Album.class))),
+                    content = @Content(schema = @Schema(implementation = AlbumEntity.class))),
             @ApiResponse(responseCode = "404", description = "Album not found", content = @Content)
     })
     @GetMapping("/{id}")
@@ -59,7 +59,7 @@ public class AlbumController {
     @Operation(summary = "Update an existing album")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Album updated successfully",
-                    content = @Content(schema = @Schema(implementation = Album.class))),
+                    content = @Content(schema = @Schema(implementation = AlbumEntity.class))),
             @ApiResponse(responseCode = "404", description = "Album not found", content = @Content)
     })
     @PutMapping("/{id}")

@@ -3,7 +3,7 @@ package com.desafios.galeriaimagensspring.infrastructure.s3.storage;
 
 import com.desafios.galeriaimagensspring.infrastructure.s3.exceptions.image.S3DeletingException;
 import com.desafios.galeriaimagensspring.infrastructure.s3.exceptions.image.S3UploadException;
-import com.desafios.galeriaimagensspring.domain.service.StorageService;
+import com.desafios.galeriaimagensspring.core.service.StorageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;

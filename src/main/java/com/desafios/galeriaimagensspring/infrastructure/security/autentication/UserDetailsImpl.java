@@ -1,7 +1,7 @@
 package com.desafios.galeriaimagensspring.infrastructure.security.autentication;
 
-import com.desafios.galeriaimagensspring.domain.model.User;
-import com.desafios.galeriaimagensspring.domain.model.enums.UserRole;
+import com.desafios.galeriaimagensspring.infrastructure.persistence.entity.User;
+import com.desafios.galeriaimagensspring.core.model.enums.UserRole;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;

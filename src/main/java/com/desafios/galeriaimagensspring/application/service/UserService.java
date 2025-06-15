@@ -1,8 +1,10 @@
 package com.desafios.galeriaimagensspring.application.service;
 
-import com.desafios.galeriaimagensspring.domain.model.User;
+import com.desafios.galeriaimagensspring.core.model.Users;
+import com.desafios.galeriaimagensspring.infrastructure.persistence.entity.User;
+import com.desafios.galeriaimagensspring.infrastructure.persistence.entity.UserEntity;
 import com.desafios.galeriaimagensspring.infrastructure.security.autentication.UserDetailsImpl;
-import com.desafios.galeriaimagensspring.domain.repository.UserRepository;
+import com.desafios.galeriaimagensspring.infrastructure.persistence.repository.UserRepository;
 import com.desafios.galeriaimagensspring.infrastructure.security.autentication.JwtTokenService;
 import com.desafios.galeriaimagensspring.infrastructure.security.config.SecurityConfiguration;
 import com.desafios.galeriaimagensspring.infrastructure.security.dtos.LoginUserDTO;
@@ -44,7 +46,7 @@ public class UserService {
     }
 
     public void registerUser(RegisterUserDTO registerUserDTO){
-        User newUser = User.builder()
+        UserEntity newUser = UserEntity.builder()
                 .email(registerUserDTO.email())
                 .password(securityConfiguration.passwordEncoder().encode(registerUserDTO.password()))
                 .userRole(registerUserDTO.role())

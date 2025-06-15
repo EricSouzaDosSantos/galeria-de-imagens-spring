@@ -1,10 +1,10 @@
 package com.desafios.galeriaimagensspring.application.service;
 
-import com.desafios.galeriaimagensspring.application.dto.albums.SaveAlbumDto;
-import com.desafios.galeriaimagensspring.domain.exception.album.AlbumNotFoundException;
-import com.desafios.galeriaimagensspring.domain.model.Album;
-import com.desafios.galeriaimagensspring.domain.repository.AlbumRepository;
-import com.desafios.galeriaimagensspring.domain.service.AlbumService;
+import com.desafios.galeriaimagensspring.interfaces.dto.albums.SaveAlbumDto;
+import com.desafios.galeriaimagensspring.application.exception.album.AlbumNotFoundException;
+import com.desafios.galeriaimagensspring.infrastructure.persistence.repository.AlbumRepository;
+import com.desafios.galeriaimagensspring.core.service.AlbumService;
+import com.desafios.galeriaimagensspring.infrastructure.persistence.entity.AlbumEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,9 +19,9 @@ public class AlbumServiceImpl implements AlbumService {
 
     @Override
     public SaveAlbumDto createAlbum(SaveAlbumDto albumDto) {
-        Album album = new Album();
+        AlbumEntity album = new AlbumEntity();
         album.setName(albumDto.name());
-        album.setImagens(albumDto.imagensList());
+        album.setImagens(albumDto.imagemEntityList());
         albumRepository.save(album);
         return albumDto;
     }
@@ -41,11 +41,11 @@ public class AlbumServiceImpl implements AlbumService {
 
     @Override
     public SaveAlbumDto updateAlbum(Long id, SaveAlbumDto updatedAlbum) {
-        Album existingAlbum = albumRepository.findById(id)
+        AlbumEntity existingAlbum = albumRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Album not found"));
 
         existingAlbum.setName(updatedAlbum.name());
-        existingAlbum.setImagens(updatedAlbum.imagensList());
+        existingAlbum.setImagens(updatedAlbum.imagemEntityList());
         albumRepository.save(existingAlbum);
         return updatedAlbum;
     }
