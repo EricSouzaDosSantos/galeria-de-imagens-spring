@@ -1,7 +1,5 @@
 package com.desafios.galeriaimagensspring.application.service;
 
-import com.desafios.galeriaimagensspring.core.model.Users;
-import com.desafios.galeriaimagensspring.infrastructure.persistence.entity.User;
 import com.desafios.galeriaimagensspring.infrastructure.persistence.entity.UserEntity;
 import com.desafios.galeriaimagensspring.infrastructure.security.autentication.UserDetailsImpl;
 import com.desafios.galeriaimagensspring.infrastructure.persistence.repository.UserRepository;

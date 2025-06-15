@@ -1,12 +1,12 @@
 package com.desafios.galeriaimagensspring.application.service;
 
+import com.desafios.galeriaimagensspring.infrastructure.persistence.entity.UserEntity;
 import com.desafios.galeriaimagensspring.interfaces.dto.imagens.GetImageDto;
 import com.desafios.galeriaimagensspring.interfaces.dto.imagens.SaveImageDTO;
 import com.desafios.galeriaimagensspring.application.exception.image.ImageNotFoundException;
 import com.desafios.galeriaimagensspring.application.exception.user.UnauthorizedException;
 import com.desafios.galeriaimagensspring.application.exception.user.UserNotFoundException;
 import com.desafios.galeriaimagensspring.infrastructure.persistence.entity.ImagemEntity;
-import com.desafios.galeriaimagensspring.infrastructure.persistence.entity.User;
 import com.desafios.galeriaimagensspring.infrastructure.persistence.repository.ImagensRepository;
 import com.desafios.galeriaimagensspring.infrastructure.persistence.repository.UserRepository;
 import com.desafios.galeriaimagensspring.application.usecase.image.delete.DeleteImageUseCase;
@@ -40,9 +40,9 @@ public class ImagemService {
         imagem.setDescription(saveImageDTO.description());
         imagem.setImageURL(imageURL);
         imagem.setAlternateText(saveImageDTO.alternateText());
-        imagem.setCreationDate(new Date());
+        imagem.setCreatedAt(new Date());
 //        imagem.setAlbum(saveImageDTO.albums());
-        User userlogged = getAuthenticatedUser();
+        UserEntity userlogged = getAuthenticatedUser();
         imagem.setUser(userlogged);
 
         return imagensRepository.save(imagem);
@@ -74,7 +74,7 @@ public class ImagemService {
             validateUserAuthorization(imagem);
             GetImageDto getImageDto = new GetImageDto(imagem.getName(),
                     imagem.getDescription(),
-                    imagem.getCreationDate(),
+                    imagem.getCreatedAt(),
                     imagem.getAlternateText(),
                     imagem.getImageURL());
             return getImageDto;
@@ -86,22 +86,22 @@ public class ImagemService {
         validateUserAuthorization(imagem);
         return new GetImageDto(imagem.getName(),
                 imagem.getDescription(),
-                imagem.getCreationDate(),
+                imagem.getCreatedAt(),
                 imagem.getAlternateText(),
                 imagem.getImageURL());
     }
 
-    public User getAuthenticatedUser() {
+    public UserEntity getAuthenticatedUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !(authentication.isAuthenticated())) {
             throw new UnauthorizedException("unauthenticated user");
         }
-        User user = userRepository.findByEmail((String) authentication.getPrincipal()).orElseThrow(() -> new UserNotFoundException("User not found"));
+        UserEntity user = userRepository.findByEmail((String) authentication.getPrincipal()).orElseThrow(() -> new UserNotFoundException("User not found"));
         return user;
     }
 
     private void validateUserAuthorization(ImagemEntity imagem) {
-        User userLogged = getAuthenticatedUser();
+        UserEntity userLogged = getAuthenticatedUser();
         if (imagem.getUser().getId() != userLogged.getId()) {
             throw new UnauthorizedException("User not authorized to access this image");
         }

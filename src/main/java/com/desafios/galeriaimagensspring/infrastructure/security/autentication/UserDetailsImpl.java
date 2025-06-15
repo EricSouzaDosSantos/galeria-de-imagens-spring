@@ -1,7 +1,7 @@
 package com.desafios.galeriaimagensspring.infrastructure.security.autentication;
 
-import com.desafios.galeriaimagensspring.infrastructure.persistence.entity.User;
 import com.desafios.galeriaimagensspring.core.model.enums.UserRole;
+import com.desafios.galeriaimagensspring.infrastructure.persistence.entity.UserEntity;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
@@ -15,7 +15,7 @@ import java.util.List;
 @AllArgsConstructor
 public class UserDetailsImpl implements UserDetails {
 
-    private final User user;
+    private final UserEntity user;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

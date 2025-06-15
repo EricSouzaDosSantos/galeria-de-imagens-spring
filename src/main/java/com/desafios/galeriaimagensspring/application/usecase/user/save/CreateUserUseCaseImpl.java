@@ -1,6 +1,6 @@
 package com.desafios.galeriaimagensspring.application.usecase.user.save;
 
-import com.desafios.galeriaimagensspring.infrastructure.persistence.entity.User;
+import com.desafios.galeriaimagensspring.infrastructure.persistence.entity.UserEntity;
 import com.desafios.galeriaimagensspring.infrastructure.persistence.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -13,7 +13,7 @@ public class CreateUserUseCaseImpl implements CreateUserUseCase {
     private final CreateUserFolderUseCase createUserFolderUseCase;
 
     @Override
-    public void execute(User user) {
+    public void execute(UserEntity user) {
         userRepository.save(user);
         createUserFolderUseCase.execute(user.getEmail());
     }

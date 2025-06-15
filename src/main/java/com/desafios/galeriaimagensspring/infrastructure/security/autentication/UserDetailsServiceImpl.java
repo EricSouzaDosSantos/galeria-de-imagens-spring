@@ -1,6 +1,6 @@
 package com.desafios.galeriaimagensspring.infrastructure.security.autentication;
 
-import com.desafios.galeriaimagensspring.infrastructure.persistence.entity.User;
+import com.desafios.galeriaimagensspring.infrastructure.persistence.entity.UserEntity;
 import com.desafios.galeriaimagensspring.infrastructure.persistence.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,7 +16,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByEmail(username).orElseThrow( () -> new UsernameNotFoundException("User not found with email: " + username));
+        UserEntity user = userRepository.findByEmail(username).orElseThrow( () -> new UsernameNotFoundException("User not found with email: " + username));
         return new UserDetailsImpl(user);
     }
 }
