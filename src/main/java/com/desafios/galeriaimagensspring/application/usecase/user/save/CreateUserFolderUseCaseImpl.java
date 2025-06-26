@@ -1,17 +1,18 @@
 package com.desafios.galeriaimagensspring.application.usecase.user.save;
 
 import com.desafios.galeriaimagensspring.core.service.StorageService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
+import com.desafios.galeriaimagensspring.gateways.UserGateway;
 
-@Component
-@RequiredArgsConstructor
 public class CreateUserFolderUseCaseImpl implements CreateUserFolderUseCase {
 
-    private final StorageService storageService;
+    private final UserGateway userGateway;
+
+    public CreateUserFolderUseCaseImpl(UserGateway userGateway) {
+        this.userGateway = userGateway;
+    }
 
     @Override
     public void execute(String email) {
-        storageService.createUserFolder(email);
+        userGateway.createUserFolder(email);
     }
 }

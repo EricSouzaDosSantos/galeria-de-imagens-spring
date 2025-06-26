@@ -4,12 +4,12 @@ import com.desafios.galeriaimagensspring.core.model.enums.UserRole;
 
 import java.util.List;
 
-public record Users(
+public record User(
         long id,
         String email,
         String password,
         UserRole userRole,
-        List<Imagens> imagens,
-        List<Imagens> albuns
+        List<Imagem> imagens,
+        List<Imagem> albuns
 ) {
 }

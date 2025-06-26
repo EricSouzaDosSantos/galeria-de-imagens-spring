@@ -1,7 +1,7 @@
 package com.desafios.galeriaimagensspring.application.usecase.user.save;
 
-import com.desafios.galeriaimagensspring.infrastructure.persistence.entity.UserEntity;
+import com.desafios.galeriaimagensspring.core.model.User;
 
 public interface CreateUserUseCase {
-    void execute(UserEntity user);
+    void execute(User user);
 }
