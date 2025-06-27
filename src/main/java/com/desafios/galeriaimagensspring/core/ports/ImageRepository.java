@@ -1,13 +1,13 @@
 package com.desafios.galeriaimagensspring.core.ports;
 
-import com.desafios.galeriaimagensspring.core.model.Imagens;
+import com.desafios.galeriaimagensspring.core.model.Imagem;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface ImageRepository {
-    Imagens save(Imagens image);
-    List<Imagens> findAll();
-    Optional<Imagens> findById(Long id);
+    Imagem save(Imagem image);
+    List<Imagem> findAll();
+    Optional<Imagem> findById(Long id);
     void deleteById(Long id);
 }

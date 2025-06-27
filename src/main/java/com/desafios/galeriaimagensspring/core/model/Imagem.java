@@ -1,11 +1,9 @@
 package com.desafios.galeriaimagensspring.core.model;
 
-
-
 import java.time.LocalDate;
 import java.util.List;
 
-public record Imagens(
+public record Imagem(
         long id,
         String description,
         String name,
@@ -13,6 +11,6 @@ public record Imagens(
         String alternateText,
         String url,
         List<Albums> albuns,
-        Users User
+        User User
 ) {
 }

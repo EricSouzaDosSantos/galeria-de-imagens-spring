@@ -5,7 +5,7 @@ import java.util.List;
 public record Albums(
         long id,
         String name,
-        List<Imagens> imagens,
-        Users user
+        List<Imagem> imagens,
+        User user
 ) {
 }
