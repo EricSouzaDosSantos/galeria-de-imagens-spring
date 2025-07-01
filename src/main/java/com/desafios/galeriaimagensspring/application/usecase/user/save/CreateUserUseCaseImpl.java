@@ -1,7 +1,7 @@
 package com.desafios.galeriaimagensspring.application.usecase.user.save;
 
 import com.desafios.galeriaimagensspring.core.model.User;
-import com.desafios.galeriaimagensspring.gateways.UserGateway;
+import com.desafios.galeriaimagensspring.core.gateways.UserGateway;
 
 public class CreateUserUseCaseImpl implements CreateUserUseCase {
 
