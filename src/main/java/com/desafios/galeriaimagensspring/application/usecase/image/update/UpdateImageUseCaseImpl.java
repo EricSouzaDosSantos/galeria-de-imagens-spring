@@ -1,18 +1,29 @@
 package com.desafios.galeriaimagensspring.application.usecase.image.update;
 
-import com.desafios.galeriaimagensspring.infrastructure.s3.storage.S3StorageServiceImpl;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
-import org.springframework.web.multipart.MultipartFile;
+import com.desafios.galeriaimagensspring.core.gateways.ImageGateway;
+import com.desafios.galeriaimagensspring.core.gateways.StorageGateway;
+import com.desafios.galeriaimagensspring.core.model.FileData;
+import com.desafios.galeriaimagensspring.core.model.Imagem;
 
-@Component
-@RequiredArgsConstructor
 public class UpdateImageUseCaseImpl implements UpdateImageUseCase {
 
-    private final S3StorageServiceImpl s3StorageService;
+    private final StorageGateway storageGateway;
+    private final ImageGateway imageGateway;
+
+    public UpdateImageUseCaseImpl(StorageGateway storageGateway, ImageGateway imageGateway) {
+        this.storageGateway = storageGateway;
+        this.imageGateway = imageGateway;
+    }
 
     @Override
-    public String execute(String oldImageURL, MultipartFile multipartFile) {
-        return s3StorageService.updateImage(oldImageURL, multipartFile);
+    public String execute(String oldImageURL, FileData file) {
+        String newUrl = storageGateway.updateImage(oldImageURL, file);
+        imageGateway.updateImageURLByImageURL(oldImageURL, newUrl);
+        return newUrl;
+    }
+
+    @Override
+    public String execute(Imagem imagem) {
+        return "";
     }
 }

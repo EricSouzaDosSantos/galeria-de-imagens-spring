@@ -2,7 +2,7 @@ package com.desafios.galeriaimagensspring.infrastructure.security.filters;
 
 import com.desafios.galeriaimagensspring.infrastructure.persistence.entity.UserEntity;
 import com.desafios.galeriaimagensspring.infrastructure.security.autentication.UserDetailsImpl;
-import com.desafios.galeriaimagensspring.infrastructure.persistence.repository.UserRepository;
+import com.desafios.galeriaimagensspring.infrastructure.persistence.repository.user.JpaUserRepository;
 import com.desafios.galeriaimagensspring.infrastructure.security.config.SecurityConfiguration;
 import com.desafios.galeriaimagensspring.infrastructure.security.autentication.JwtTokenService;
 import jakarta.servlet.FilterChain;
@@ -22,7 +22,7 @@ import java.util.Arrays;
 @AllArgsConstructor
 public class UserAuthenticationFilter extends OncePerRequestFilter {
 
-    private final UserRepository userRepository;
+    private final JpaUserRepository jpaUserRepository;
 
     private final JwtTokenService jwtTokenService;
 
@@ -34,7 +34,7 @@ public class UserAuthenticationFilter extends OncePerRequestFilter {
 
             if (token != null){
                 String subject = jwtTokenService.getSubjectFromToken(token);
-                UserEntity user = userRepository.findByEmail(subject).get();
+                UserEntity user = jpaUserRepository.findByEmail(subject).get();
                 UserDetailsImpl userDetails = new UserDetailsImpl(user);
 
                 Authentication authentication =

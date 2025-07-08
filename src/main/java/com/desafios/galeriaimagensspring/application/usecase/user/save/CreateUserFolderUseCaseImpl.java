@@ -1,18 +1,17 @@
 package com.desafios.galeriaimagensspring.application.usecase.user.save;
 
-import com.desafios.galeriaimagensspring.core.service.StorageService;
-import com.desafios.galeriaimagensspring.gateways.UserGateway;
+import com.desafios.galeriaimagensspring.core.gateways.StorageGateway;
 
 public class CreateUserFolderUseCaseImpl implements CreateUserFolderUseCase {
 
-    private final UserGateway userGateway;
+    private final StorageGateway storageGateway;
 
-    public CreateUserFolderUseCaseImpl(UserGateway userGateway) {
-        this.userGateway = userGateway;
+    public CreateUserFolderUseCaseImpl(StorageGateway storageGateway) {
+        this.storageGateway = storageGateway;
     }
 
     @Override
     public void execute(String email) {
-        userGateway.createUserFolder(email);
+        storageGateway.createUserFolder(email);
     }
 }

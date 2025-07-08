@@ -1,17 +1,21 @@
 package com.desafios.galeriaimagensspring.application.usecase.image.delete;
 
-import com.desafios.galeriaimagensspring.core.service.StorageService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
+import com.desafios.galeriaimagensspring.core.gateways.ImageGateway;
+import com.desafios.galeriaimagensspring.core.gateways.StorageGateway;
 
-@Component
-@RequiredArgsConstructor
 public class DeleteImageUseCaseImpl implements DeleteImageUseCase {
 
-    private final StorageService storageService;
+    private final StorageGateway storageGateway;
+    private final ImageGateway imageGateway;
+
+    public DeleteImageUseCaseImpl(StorageGateway storageGateway, ImageGateway imageGateway) {
+        this.storageGateway = storageGateway;
+        this.imageGateway = imageGateway;
+    }
 
     @Override
     public void execute(String imageURL) {
-        storageService.delete(imageURL);
+        storageGateway.delete(imageURL);
+        imageGateway.deleteByImageURL(imageURL);
     }
 }

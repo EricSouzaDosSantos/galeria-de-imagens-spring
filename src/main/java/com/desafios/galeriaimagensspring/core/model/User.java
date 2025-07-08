@@ -10,6 +10,6 @@ public record User(
         String password,
         UserRole userRole,
         List<Imagem> imagens,
-        List<Imagem> albuns
+        List<Albums> albums
 ) {
 }

@@ -1,15 +1,14 @@
 package com.desafios.galeriaimagensspring.interfaces.controller;
 
-import com.desafios.galeriaimagensspring.interfaces.dto.imagens.GetImageDto;
-import com.desafios.galeriaimagensspring.interfaces.dto.imagens.SaveImageDTO;
-import com.desafios.galeriaimagensspring.infrastructure.persistence.entity.ImagemEntity;
+import com.desafios.galeriaimagensspring.interfaces.dto.file.FileMapper;
+import com.desafios.galeriaimagensspring.interfaces.dto.imagens.ImageResponseDto;
+import com.desafios.galeriaimagensspring.interfaces.dto.imagens.ImageRequestDTO;
 import com.desafios.galeriaimagensspring.application.service.ImagemService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -18,11 +17,14 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/images")
-@RequiredArgsConstructor
 @Tag(name = "Imagens", description = "Endpoint to manage images")
 public class ImageController {
 
     private final ImagemService imagemService;
+
+    public ImageController(ImagemService imagemService) {
+        this.imagemService = imagemService;
+    }
 
     @Operation(
             summary = "Upload an image",
@@ -30,24 +32,24 @@ public class ImageController {
             requestBody = @RequestBody(
                     content = @Content(
                             mediaType = "multipart/form-data",
-                            schema = @Schema(implementation = SaveImageDTO.class)
+                            schema = @Schema(implementation = ImageRequestDTO.class)
                     )
             ),
             responses = {
                     @ApiResponse(responseCode = "201", description = "Image successfully uploaded"),
-                    @ApiResponse(responseCode = "401", description = "User not authenticated"),
+                    @ApiResponse(responseCode = "401", description = "user not authenticated"),
                     @ApiResponse(responseCode = "500", description = "Internal server error")
             }
     )
     @PostMapping(consumes = "multipart/form-data")
-    public ResponseEntity<ImagemEntity> saveImage(
+    public ResponseEntity<ImageResponseDto> saveImage(
             @RequestPart("image") MultipartFile image,
             @RequestPart("alternateText") String alternateText,
             @RequestPart(value = "name", required = false) String name,
             @RequestPart(value = "description", required = false) String description) {
 
-        SaveImageDTO saveImageDTO = new SaveImageDTO(name, description, alternateText, image);
-        ImagemEntity savedImage = imagemService.saveImage(saveImageDTO);
+        ImageRequestDTO imageRequestDTO = new ImageRequestDTO(name, description, alternateText, image);
+        ImageResponseDto savedImage = imagemService.saveImage(imageRequestDTO);
         return ResponseEntity.status(201).body(savedImage);
     }
 
@@ -58,19 +60,19 @@ public class ImageController {
             requestBody = @RequestBody(
                     content = @Content(
                             mediaType = "application/json",
-                            schema = @Schema(implementation = GetImageDto.class)
+                            schema = @Schema(implementation = ImageResponseDto.class)
                     )
             ),
             responses = {
                     @ApiResponse(responseCode = "201", description = "Image successfully uploaded"),
-                    @ApiResponse(responseCode = "401", description = "User not authenticated"),
-                    @ApiResponse(responseCode = "403", description = "User not authorized to update this image"),
+                    @ApiResponse(responseCode = "401", description = "user not authenticated"),
+                    @ApiResponse(responseCode = "403", description = "user not authorized to update this image"),
                     @ApiResponse(responseCode = "500", description = "Internal server error")
             }
     )
     @GetMapping
-    public ResponseEntity<List<GetImageDto>> getAllImages() {
-        List<GetImageDto> images = imagemService.findAllImages();
+    public ResponseEntity<List<ImageResponseDto>> getAllImages() {
+        List<ImageResponseDto> images = imagemService.findAllImages();
         return ResponseEntity.ok(images);
     }
 
@@ -80,20 +82,20 @@ public class ImageController {
             requestBody = @RequestBody(
                     content = @Content(
                             mediaType = "multipart/form-data",
-                            schema = @Schema(implementation = ImagemEntity.class)
+                            schema = @Schema(implementation = ImageResponseDto.class)
                     )
             ),
             responses = {
                     @ApiResponse(responseCode = "200", description = "Image successfully updated"),
-                    @ApiResponse(responseCode = "401", description = "User not authenticated"),
-                    @ApiResponse(responseCode = "403", description = "User not authorized to update this image"),
+                    @ApiResponse(responseCode = "401", description = "user not authenticated"),
+                    @ApiResponse(responseCode = "403", description = "user not authorized to update this image"),
                     @ApiResponse(responseCode = "404", description = "Image not found"),
                     @ApiResponse(responseCode = "500", description = "Internal server error")
             }
     )
     @PutMapping("/{oldImageUrl}")
-    public ResponseEntity<ImagemEntity> updateImage(@PathVariable String oldImageUrl, @RequestPart MultipartFile image) {
-        ImagemEntity updatedImage = imagemService.updateImage(oldImageUrl, image);
+    public ResponseEntity<ImageResponseDto> updateImage(@PathVariable String oldImageUrl, @RequestPart MultipartFile image) {
+        ImageResponseDto updatedImage = imagemService.updateImage(oldImageUrl, FileMapper.toFileData(image));
         return ResponseEntity.ok(updatedImage);
     }
 
@@ -102,13 +104,15 @@ public class ImageController {
             description = "Allows the authenticated user to delete an image.",
             requestBody = @RequestBody(
                     content = @Content(
-                            mediaType = "application/json"
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = Void.class)
+
                     )
             ),
             responses = {
                     @ApiResponse(responseCode = "204", description = "Image successfully deleted"),
-                    @ApiResponse(responseCode = "401", description = "User not authenticated"),
-                    @ApiResponse(responseCode = "403", description = "User not authorized to delete this image"),
+                    @ApiResponse(responseCode = "401", description = "user not authenticated"),
+                    @ApiResponse(responseCode = "403", description = "user not authorized to delete this image"),
                     @ApiResponse(responseCode = "404", description = "Image not found"),
                     @ApiResponse(responseCode = "500", description = "Internal server error")
             }

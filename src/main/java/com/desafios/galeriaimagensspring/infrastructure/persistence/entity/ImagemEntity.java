@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import org.springframework.data.annotation.CreatedDate;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -23,7 +24,7 @@ public class ImagemEntity {
 
     @Column(name = "creation_date", nullable = false)
     @CreatedDate
-    private Date createdAt;
+    private LocalDate createdAt;
 
     @Column(name = "alternate_text")
     private String alternateText;

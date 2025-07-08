@@ -1,6 +1,7 @@
 package com.desafios.galeriaimagensspring.application.usecase.storage.upload;
 
 import com.desafios.galeriaimagensspring.core.gateways.StorageGateway;
+import com.desafios.galeriaimagensspring.core.model.FileData;
 import org.springframework.web.multipart.MultipartFile;
 
 public class UploadImageUseCaseImpl implements UploadImageUseCase {
@@ -12,7 +13,7 @@ public class UploadImageUseCaseImpl implements UploadImageUseCase {
     }
 
     @Override
-    public String execute(MultipartFile multipartFile, String folderName) {
-        return storageGateway.upload(multipartFile, folderName);
+    public String execute(FileData file, String folderName) {
+        return storageGateway.upload(file, folderName);
     }
 }

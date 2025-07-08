@@ -1,7 +1,7 @@
 package com.desafios.galeriaimagensspring.application.usecase.storage.upload;
 
-import org.springframework.web.multipart.MultipartFile;
+import com.desafios.galeriaimagensspring.core.model.FileData;
 
 public interface UploadImageUseCase {
-    String execute(MultipartFile multipartFile, String folderName);
+    String execute(FileData file, String folderName);
 }

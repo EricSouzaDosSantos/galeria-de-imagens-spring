@@ -1,5 +1,7 @@
 package com.desafios.galeriaimagensspring.infrastructure.configuration.beans.auth;
 
+import com.desafios.galeriaimagensspring.application.usecase.auth.authenticate.AuthenticateUserUseCase;
+import com.desafios.galeriaimagensspring.application.usecase.auth.authenticate.AuthenticateUserUseCaseImpl;
 import com.desafios.galeriaimagensspring.application.usecase.auth.get.GetAuthenticateUserUseCase;
 import com.desafios.galeriaimagensspring.application.usecase.auth.get.GetAuthenticateUserUseCaseImpl;
 import com.desafios.galeriaimagensspring.application.usecase.auth.validation.ValidateUserAuthorizationUseCase;
@@ -18,5 +20,10 @@ public class AuthUseCaseConfig {
     @Bean
     public ValidateUserAuthorizationUseCase validateUserAuthorizationUseCase(AuthGateway authGateway) {
         return new ValidateUserAuthorizationUseCaseImpl(authGateway);
+    }
+
+    @Bean
+    public AuthenticateUserUseCase authenticateUserUseCase(AuthGateway authGateway) {
+        return new AuthenticateUserUseCaseImpl(authGateway);
     }
 }

@@ -11,6 +11,6 @@ public record Imagem(
         String alternateText,
         String url,
         List<Albums> albuns,
-        User User
+        User user
 ) {
 }

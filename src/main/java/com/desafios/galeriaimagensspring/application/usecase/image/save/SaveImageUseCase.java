@@ -1,7 +1,9 @@
 package com.desafios.galeriaimagensspring.application.usecase.image.save;
 
-import org.springframework.web.multipart.MultipartFile;
+import com.desafios.galeriaimagensspring.core.model.Imagem;
+
+import java.util.Optional;
 
 public interface SaveImageUseCase {
-    String execute(MultipartFile image, String folderName);
+    Optional<Imagem> execute(Imagem imagem);
 }

@@ -1,111 +1,105 @@
 package com.desafios.galeriaimagensspring.application.service;
 
-import com.desafios.galeriaimagensspring.infrastructure.persistence.entity.UserEntity;
-import com.desafios.galeriaimagensspring.interfaces.dto.imagens.GetImageDto;
-import com.desafios.galeriaimagensspring.interfaces.dto.imagens.SaveImageDTO;
-import com.desafios.galeriaimagensspring.application.exception.image.ImageNotFoundException;
-import com.desafios.galeriaimagensspring.application.exception.user.UnauthorizedException;
-import com.desafios.galeriaimagensspring.application.exception.user.UserNotFoundException;
-import com.desafios.galeriaimagensspring.infrastructure.persistence.entity.ImagemEntity;
-import com.desafios.galeriaimagensspring.infrastructure.persistence.repository.ImagensRepository;
-import com.desafios.galeriaimagensspring.infrastructure.persistence.repository.UserRepository;
+import com.desafios.galeriaimagensspring.application.usecase.auth.get.GetAuthenticateUserUseCase;
+import com.desafios.galeriaimagensspring.application.usecase.auth.validation.ValidateUserAuthorizationUseCase;
+import com.desafios.galeriaimagensspring.application.usecase.image.get.GetImageUseCase;
+import com.desafios.galeriaimagensspring.application.usecase.storage.upload.UploadImageUseCase;
+import com.desafios.galeriaimagensspring.core.model.FileData;
+import com.desafios.galeriaimagensspring.core.model.Imagem;
+import com.desafios.galeriaimagensspring.core.model.User;
+import com.desafios.galeriaimagensspring.interfaces.dto.file.FileMapper;
+import com.desafios.galeriaimagensspring.interfaces.dto.imagens.ImageResponseDto;
+import com.desafios.galeriaimagensspring.interfaces.dto.imagens.ImageRequestDTO;
 import com.desafios.galeriaimagensspring.application.usecase.image.delete.DeleteImageUseCase;
 import com.desafios.galeriaimagensspring.application.usecase.image.save.SaveImageUseCase;
 import com.desafios.galeriaimagensspring.application.usecase.image.update.UpdateImageUseCase;
-import com.desafios.galeriaimagensspring.application.usecase.user.save.CreateUserFolderUseCase;
-import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.util.Date;
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
-@Service
-@RequiredArgsConstructor
 public class ImagemService {
 
-    private final ImagensRepository imagensRepository;
+    private final UploadImageUseCase uploadImageUseCase;
     private final SaveImageUseCase saveImageUseCase;
+    private final GetImageUseCase getImageUseCase;
     private final DeleteImageUseCase deleteImageUseCase;
     private final UpdateImageUseCase updateImageUseCase;
-    private final UserRepository userRepository;
-    private final CreateUserFolderUseCase createUserFolderUseCase;
+    private final GetAuthenticateUserUseCase getAuthenticateUserUseCase;
+    private final ValidateUserAuthorizationUseCase validateUserAuthorizationUseCase;
 
-    public ImagemEntity saveImage(SaveImageDTO saveImageDTO) {
-        String imageURL = saveImageUseCase.execute(saveImageDTO.image(), getAuthenticatedUser().getEmail());
-        ImagemEntity imagem = new ImagemEntity();
-        imagem.setName((saveImageDTO.name() == null || saveImageDTO.name().isEmpty()) ? saveImageDTO.image().getOriginalFilename() : saveImageDTO.name());
-        imagem.setDescription(saveImageDTO.description());
-        imagem.setImageURL(imageURL);
-        imagem.setAlternateText(saveImageDTO.alternateText());
-        imagem.setCreatedAt(new Date());
-//        imagem.setAlbum(saveImageDTO.albums());
-        UserEntity userlogged = getAuthenticatedUser();
-        imagem.setUser(userlogged);
+    public ImagemService(UploadImageUseCase uploadImageUseCase,
+                         SaveImageUseCase saveImageUseCase,
+                         GetImageUseCase getImageUseCase,
+                         DeleteImageUseCase deleteImageUseCase,
+                         UpdateImageUseCase updateImageUseCase,
+                         GetAuthenticateUserUseCase getAuthenticateUserUseCase,
+                         ValidateUserAuthorizationUseCase validateUserAuthorizationUseCase) {
+        this.uploadImageUseCase = uploadImageUseCase;
+        this.saveImageUseCase = saveImageUseCase;
+        this.getImageUseCase = getImageUseCase;
+        this.deleteImageUseCase = deleteImageUseCase;
+        this.updateImageUseCase = updateImageUseCase;
+        this.getAuthenticateUserUseCase = getAuthenticateUserUseCase;
+        this.validateUserAuthorizationUseCase = validateUserAuthorizationUseCase;
+    }
 
-        return imagensRepository.save(imagem);
+
+    public ImageResponseDto saveImage(ImageRequestDTO imageRequestDTO) {
+        User userlogged = getAuthenticateUserUseCase.execute();
+        FileData fileData = FileMapper.toFileData(imageRequestDTO.image());
+        String imageURL = uploadImageUseCase.execute(fileData, userlogged.email());
+        String imageName = (imageRequestDTO.name() == null || imageRequestDTO.name().isEmpty()) ?
+                imageRequestDTO.image().getOriginalFilename() : imageRequestDTO.name();
+        Imagem imagem = new Imagem(
+                0,
+                imageName,
+                imageRequestDTO.description(),
+                LocalDate.now(),
+                imageRequestDTO.alternateText(),
+                imageURL,
+                new ArrayList<>(),
+                userlogged
+        );
+        saveImageUseCase.execute(imagem)
+                .orElseThrow(() -> new RuntimeException("Failed to save image"));
+
+        return imageResponseDTOBuilder(imagem);
     }
 
     public void deleteImage(String imageURL) {
-        ImagemEntity imagem = imagensRepository.findByImageURL(imageURL)
-                .orElseThrow(() -> new ImageNotFoundException("Image not found"));
-
-        validateUserAuthorization(imagem);
-
+        Imagem imagem = getImageUseCase.execute(imageURL);
+        validateUserAuthorizationUseCase.execute(imagem);
         deleteImageUseCase.execute(imageURL);
     }
 
-    public ImagemEntity updateImage(String oldImageUrl, MultipartFile file){
+    public ImageResponseDto updateImage(String oldImageUrl, FileData file) {
+//        FileData fileData = fileDataBuilder(file);
         String newImageUrl = updateImageUseCase.execute(oldImageUrl, file);
-        ImagemEntity imagem = imagensRepository.findByImageURL(oldImageUrl)
-                .orElseThrow(() -> new ImageNotFoundException("Image not found"));
-
-        validateUserAuthorization(imagem);
-
-        imagem.setImageURL(newImageUrl);
-        imagem.setName(file.getOriginalFilename());
-        return imagensRepository.save(imagem);
+        Imagem imagem = getImageUseCase.execute(newImageUrl);
+        validateUserAuthorizationUseCase.execute(imagem);
+        return imageResponseDTOBuilder(imagem);
     }
 
-    public List<GetImageDto> findAllImages() {
-        return imagensRepository.findAll().stream().map(imagem -> {
-            validateUserAuthorization(imagem);
-            GetImageDto getImageDto = new GetImageDto(imagem.getName(),
-                    imagem.getDescription(),
-                    imagem.getCreatedAt(),
-                    imagem.getAlternateText(),
-                    imagem.getImageURL());
-            return getImageDto;
+    public List<ImageResponseDto> findAllImages() {
+        return getImageUseCase.execute().stream().map(imagem -> {
+            validateUserAuthorizationUseCase.execute(imagem);
+            return imageResponseDTOBuilder(imagem);
         }).toList();
     }
 
-    public GetImageDto findImageById(Long id) {
-        ImagemEntity imagem = imagensRepository.findById(id).orElseThrow(() -> new ImageNotFoundException("Image not found"));
-        validateUserAuthorization(imagem);
-        return new GetImageDto(imagem.getName(),
-                imagem.getDescription(),
-                imagem.getCreatedAt(),
-                imagem.getAlternateText(),
-                imagem.getImageURL());
+    public ImageResponseDto findImageById(Long id) {
+        Imagem imagem = getImageUseCase.execute(id);
+        validateUserAuthorizationUseCase.execute(imagem);
+        return imageResponseDTOBuilder(imagem);
     }
 
-    public UserEntity getAuthenticatedUser() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || !(authentication.isAuthenticated())) {
-            throw new UnauthorizedException("unauthenticated user");
-        }
-        UserEntity user = userRepository.findByEmail((String) authentication.getPrincipal()).orElseThrow(() -> new UserNotFoundException("User not found"));
-        return user;
+    public ImageResponseDto imageResponseDTOBuilder(Imagem imagem) {
+        return new ImageResponseDto(
+                imagem.name(),
+                imagem.description(),
+                imagem.createdAt(),
+                imagem.alternateText(),
+                imagem.url()
+        );
     }
-
-    private void validateUserAuthorization(ImagemEntity imagem) {
-        UserEntity userLogged = getAuthenticatedUser();
-        if (imagem.getUser().getId() != userLogged.getId()) {
-            throw new UnauthorizedException("User not authorized to access this image");
-        }
-    }
-
-
 }

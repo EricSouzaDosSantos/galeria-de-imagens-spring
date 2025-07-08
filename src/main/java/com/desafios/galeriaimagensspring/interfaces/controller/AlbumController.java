@@ -1,8 +1,9 @@
 package com.desafios.galeriaimagensspring.interfaces.controller;
 
-import com.desafios.galeriaimagensspring.interfaces.dto.albums.SaveAlbumDto;
-import com.desafios.galeriaimagensspring.core.service.AlbumService;
-import com.desafios.galeriaimagensspring.infrastructure.persistence.entity.AlbumEntity;
+import com.desafios.galeriaimagensspring.application.service.AlbumService;
+import com.desafios.galeriaimagensspring.interfaces.dto.albums.AlbumRequestDTO;
+import com.desafios.galeriaimagensspring.interfaces.dto.albums.AlbumResponseDTO;
+import com.desafios.galeriaimagensspring.interfaces.dto.albums.UpdateAlbumRequestDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -26,31 +27,32 @@ public class AlbumController {
     @Operation(summary = "Create a new album")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Album created successfully",
-                    content = @Content(schema = @Schema(implementation = AlbumEntity.class))),
-            @ApiResponse(responseCode = "400", description = "Invalid input", content = @Content)
+                    content = @Content(schema = @Schema(implementation = AlbumResponseDTO.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid input",
+                    content = @Content)
     })
     @PostMapping
-    public ResponseEntity<SaveAlbumDto> createAlbum(@RequestBody SaveAlbumDto album) {
-        SaveAlbumDto createdAlbum = albumService.createAlbum(album);
+    public ResponseEntity<AlbumResponseDTO> createAlbum(@RequestBody AlbumRequestDTO album) {
+        AlbumResponseDTO createdAlbum = albumService.createAlbum(album);
         return ResponseEntity.status(201).body(createdAlbum);
     }
 
     @Operation(summary = "Get all albums")
     @ApiResponse(responseCode = "200", description = "List of all albums",
-            content = @Content(schema = @Schema(implementation = SaveAlbumDto.class)))
+            content = @Content(schema = @Schema(implementation = AlbumResponseDTO.class)))
     @GetMapping
-    public ResponseEntity<List<SaveAlbumDto>> getAllAlbums() {
+    public ResponseEntity<List<AlbumResponseDTO>> getAllAlbums() {
         return ResponseEntity.ok(albumService.getAllAlbums());
     }
 
     @Operation(summary = "Get an album by ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Album found",
-                    content = @Content(schema = @Schema(implementation = AlbumEntity.class))),
+                    content = @Content(schema = @Schema(implementation = AlbumResponseDTO.class))),
             @ApiResponse(responseCode = "404", description = "Album not found", content = @Content)
     })
     @GetMapping("/{id}")
-    public ResponseEntity<SaveAlbumDto> getAlbumById(@PathVariable Long id) {
+    public ResponseEntity<AlbumResponseDTO> getAlbumById(@PathVariable Long id) {
         return albumService.getAlbumById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
@@ -59,13 +61,13 @@ public class AlbumController {
     @Operation(summary = "Update an existing album")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Album updated successfully",
-                    content = @Content(schema = @Schema(implementation = AlbumEntity.class))),
+                    content = @Content(schema = @Schema(implementation = AlbumResponseDTO.class))),
             @ApiResponse(responseCode = "404", description = "Album not found", content = @Content)
     })
     @PutMapping("/{id}")
-    public ResponseEntity<SaveAlbumDto> updateAlbum(@PathVariable Long id, @RequestBody SaveAlbumDto album) {
-        SaveAlbumDto updated = albumService.updateAlbum(id, album);
-        return ResponseEntity.ok(updated);
+    public ResponseEntity<Void> updateAlbum(@PathVariable Long id, @RequestBody UpdateAlbumRequestDTO album) {
+        albumService.updateAlbum(id, album);
+        return ResponseEntity.noContent().build();
     }
 
     @Operation(summary = "Delete an album by ID")
@@ -75,7 +77,7 @@ public class AlbumController {
     })
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteAlbum(@PathVariable Long id) {
-        albumService.deleteAlbum(id);
+//        albumService.deleteAlbum(id);
         return ResponseEntity.noContent().build();
     }
 }

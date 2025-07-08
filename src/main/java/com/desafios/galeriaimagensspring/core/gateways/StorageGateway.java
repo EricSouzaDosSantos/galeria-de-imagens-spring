@@ -1,11 +1,11 @@
 package com.desafios.galeriaimagensspring.core.gateways;
 
-import org.springframework.web.multipart.MultipartFile;
+import com.desafios.galeriaimagensspring.core.model.FileData;
 
 public interface StorageGateway {
-    String upload(MultipartFile file, String folderName);
+    String upload(FileData file, String folderName);
     void delete(String url);
     void createUserFolder(String email);
-    String updateImage(String oldImageURL, MultipartFile file);
+    String updateImage(String oldImageURL, FileData file);
 }
 
