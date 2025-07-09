@@ -16,25 +16,9 @@ import org.springframework.context.annotation.Configuration;
 public class ImageRepositoryConfig {
 
     @Bean
-    public JpaAlbumRepository jpaAlbumRepository(SpringDataAlbumRepository springDataAlbumRepository,
-                                                 AlbumMapper albumMapper,
-                                                 ImageMapper imageMapper) {
-        return new JpaAlbumRepository(springDataAlbumRepository,
-                albumMapper,
-                imageMapper);
-    }
-
-    @Bean
     public JpaImageRepository jpaImageRepository(SpringDataImageRepository springDataImageRepository,
                                                  ImageMapper imageMapper) {
         return new JpaImageRepository(springDataImageRepository,
                 imageMapper);
-    }
-
-    @Bean
-    public JpaUserRepository jpaUserRepository(SpringDataUserRepository springDataUserRepository,
-                                               UserMapper userMapper) {
-        return new JpaUserRepository(springDataUserRepository,
-                userMapper);
     }
 }
