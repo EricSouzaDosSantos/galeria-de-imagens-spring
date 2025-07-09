@@ -99,7 +99,7 @@ public class ImagemService {
                 imagem.description(),
                 imagem.createdAt(),
                 imagem.alternateText(),
-                imagem.url()
+                imagem.imageUrl()
         );
     }
 }

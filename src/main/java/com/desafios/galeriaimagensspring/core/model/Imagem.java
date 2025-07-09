@@ -9,8 +9,8 @@ public record Imagem(
         String name,
         LocalDate createdAt,
         String alternateText,
-        String url,
-        List<Albums> albuns,
+        String imageUrl,
+        List<Albums> albums,
         User user
 ) {
 }
