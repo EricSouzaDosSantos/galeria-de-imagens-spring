@@ -4,9 +4,9 @@ import com.desafios.galeriaimagensspring.infrastructure.persistence.repository.u
 import com.desafios.galeriaimagensspring.infrastructure.persistence.repository.user.SpringDataUserRepository;
 import com.desafios.galeriaimagensspring.interfaces.mapper.UserMapper;
 import org.springframework.context.annotation.Bean;
-import org.springframework.stereotype.Repository;
+import org.springframework.context.annotation.Configuration;
 
-@Repository
+@Configuration
 public class UserRepositoryConfig {
 
     @Bean
