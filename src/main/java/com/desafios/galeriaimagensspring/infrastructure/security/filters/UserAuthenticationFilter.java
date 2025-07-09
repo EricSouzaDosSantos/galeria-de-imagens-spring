@@ -1,10 +1,13 @@
 package com.desafios.galeriaimagensspring.infrastructure.security.filters;
 
+import com.desafios.galeriaimagensspring.core.gateways.UserGateway;
+import com.desafios.galeriaimagensspring.core.model.User;
 import com.desafios.galeriaimagensspring.infrastructure.persistence.entity.UserEntity;
 import com.desafios.galeriaimagensspring.infrastructure.security.autentication.UserDetailsImpl;
 import com.desafios.galeriaimagensspring.infrastructure.persistence.repository.user.JpaUserRepository;
 import com.desafios.galeriaimagensspring.infrastructure.security.config.SecurityConfiguration;
 import com.desafios.galeriaimagensspring.infrastructure.security.autentication.JwtTokenService;
+import com.desafios.galeriaimagensspring.interfaces.mapper.UserMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -22,9 +25,11 @@ import java.util.Arrays;
 @AllArgsConstructor
 public class UserAuthenticationFilter extends OncePerRequestFilter {
 
-    private final JpaUserRepository jpaUserRepository;
+    private final UserGateway userGateway;
 
     private final JwtTokenService jwtTokenService;
+
+    private final UserMapper userMapper;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -34,8 +39,8 @@ public class UserAuthenticationFilter extends OncePerRequestFilter {
 
             if (token != null){
                 String subject = jwtTokenService.getSubjectFromToken(token);
-                UserEntity user = jpaUserRepository.findByEmail(subject).get();
-                UserDetailsImpl userDetails = new UserDetailsImpl(user);
+                User user = userGateway.findByEmail(subject).get();
+                UserDetailsImpl userDetails = new UserDetailsImpl(userMapper.toEntity(user));
 
                 Authentication authentication =
                         new UsernamePasswordAuthenticationToken(userDetails.getUsername(), null, userDetails.getAuthorities());
