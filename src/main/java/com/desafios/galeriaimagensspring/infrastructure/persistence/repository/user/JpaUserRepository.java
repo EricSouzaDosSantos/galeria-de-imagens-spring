@@ -12,29 +12,27 @@ import java.util.Optional;
 public class JpaUserRepository implements UserGateway {
 
     private final SpringDataUserRepository springDataRepository;
-    private final UserMapper userMapper;
 
-    public JpaUserRepository(SpringDataUserRepository springDataRepository, UserMapper userMapper) {
+    public JpaUserRepository(SpringDataUserRepository springDataRepository) {
         this.springDataRepository = springDataRepository;
-        this.userMapper = userMapper;
     }
 
     @Override
     public Optional<User> save(User user) {
-        UserEntity entity = userMapper.toEntity(user);
-        return Optional.of(userMapper.toDomain(springDataRepository.save(entity)));
+        UserEntity entity = UserMapper.toEntity(user);
+        return Optional.of(UserMapper.toDomain(springDataRepository.save(entity)));
     }
 
     @Override
     public Optional<User> findById(Long id) {
         return springDataRepository.findById(id)
-                .map(userMapper::toDomain);
+                .map(UserMapper::toDomain);
     }
 
     @Override
     public Optional<User> findByEmail(String email) {
         return springDataRepository.findByEmail(email)
-                .map(userMapper::toDomain);
+                .map(UserMapper::toDomain);
     }
 
     @Override
@@ -46,7 +44,7 @@ public class JpaUserRepository implements UserGateway {
     public List<User> findAll() {
         return springDataRepository.findAll()
                 .stream()
-                .map(userMapper::toDomain)
+                .map(UserMapper::toDomain)
                 .toList();
     }
 }

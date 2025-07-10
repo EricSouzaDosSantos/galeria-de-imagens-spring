@@ -10,22 +10,20 @@ import java.util.Optional;
 public class JpaImageRepository implements ImageGateway {
 
     private final SpringDataImageRepository springDataRepository;
-    private final ImageMapper imageMapper;
 
-    public JpaImageRepository(SpringDataImageRepository springDataRepository, ImageMapper imageMapper) {
+    public JpaImageRepository(SpringDataImageRepository springDataRepository) {
         this.springDataRepository = springDataRepository;
-        this.imageMapper = imageMapper;
     }
 
     @Override
     public Optional<Imagem> save(Imagem imagem) {
-        ImagemEntity entity = imageMapper.toEntity(imagem);
-        return Optional.of(imageMapper.toDomain(springDataRepository.save(entity)));
+        ImagemEntity entity = ImageMapper.toEntity(imagem);
+        return Optional.of(ImageMapper.toDomain(springDataRepository.save(entity)));
     }
 
     @Override
     public Optional<Imagem> findById(Long id) {
-        return springDataRepository.findById(id).map(imageMapper::toDomain);
+        return springDataRepository.findById(id).map(ImageMapper::toDomain);
     }
 
     @Override
@@ -35,12 +33,12 @@ public class JpaImageRepository implements ImageGateway {
 
     @Override
     public Optional<Imagem> findByImageURL(String url) {
-        return springDataRepository.findByImageURL(url).map(imageMapper::toDomain);
+        return springDataRepository.findByImageURL(url).map(ImageMapper::toDomain);
     }
 
     @Override
     public List<Imagem> findAll() {
-        return springDataRepository.findAll().stream().map(imageMapper::toDomain).toList();
+        return springDataRepository.findAll().stream().map(ImageMapper::toDomain).toList();
     }
 
     @Override

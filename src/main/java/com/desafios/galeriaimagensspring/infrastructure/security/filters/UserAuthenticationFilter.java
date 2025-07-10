@@ -2,9 +2,7 @@ package com.desafios.galeriaimagensspring.infrastructure.security.filters;
 
 import com.desafios.galeriaimagensspring.core.gateways.UserGateway;
 import com.desafios.galeriaimagensspring.core.model.User;
-import com.desafios.galeriaimagensspring.infrastructure.persistence.entity.UserEntity;
 import com.desafios.galeriaimagensspring.infrastructure.security.autentication.UserDetailsImpl;
-import com.desafios.galeriaimagensspring.infrastructure.persistence.repository.user.JpaUserRepository;
 import com.desafios.galeriaimagensspring.infrastructure.security.config.SecurityConfiguration;
 import com.desafios.galeriaimagensspring.infrastructure.security.autentication.JwtTokenService;
 import com.desafios.galeriaimagensspring.interfaces.mapper.UserMapper;
@@ -29,8 +27,6 @@ public class UserAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtTokenService jwtTokenService;
 
-    private final UserMapper userMapper;
-
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
@@ -40,7 +36,7 @@ public class UserAuthenticationFilter extends OncePerRequestFilter {
             if (token != null){
                 String subject = jwtTokenService.getSubjectFromToken(token);
                 User user = userGateway.findByEmail(subject).get();
-                UserDetailsImpl userDetails = new UserDetailsImpl(userMapper.toEntity(user));
+                UserDetailsImpl userDetails = new UserDetailsImpl(UserMapper.toEntity(user));
 
                 Authentication authentication =
                         new UsernamePasswordAuthenticationToken(userDetails.getUsername(), null, userDetails.getAuthorities());

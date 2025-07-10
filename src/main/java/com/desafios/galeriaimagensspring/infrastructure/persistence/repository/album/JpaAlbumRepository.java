@@ -13,33 +13,29 @@ import java.util.Optional;
 public class JpaAlbumRepository implements AlbumGateway {
 
     private final SpringDataAlbumRepository springDataRepository;
-    private final AlbumMapper albumMapper;
-    private final ImageMapper imageMapper;
 
-    public JpaAlbumRepository(SpringDataAlbumRepository springDataRepository, AlbumMapper albumMapper, ImageMapper imageMapper) {
+    public JpaAlbumRepository(SpringDataAlbumRepository springDataRepository) {
         this.springDataRepository = springDataRepository;
-        this.albumMapper = albumMapper;
-        this.imageMapper = imageMapper;
     }
 
     @Override
     public Optional<Albums> save(Albums album) {
-        AlbumEntity albumEntity = albumMapper.toEntity(album);
-        return Optional.of(albumMapper.toDomain(springDataRepository.save(albumEntity)));
+        AlbumEntity albumEntity = AlbumMapper.toEntity(album);
+        return Optional.of(AlbumMapper.toDomain(springDataRepository.save(albumEntity)));
     }
 
     @Override
     public List<Albums> findAll() {
         return springDataRepository.findAll()
                 .stream()
-                .map(albumMapper::toDomain)
+                .map(AlbumMapper::toDomain)
                 .toList();
     }
 
     @Override
     public Optional<Albums> findById(Long id) {
         return springDataRepository.findById(id)
-                .map(albumMapper::toDomain);
+                .map(AlbumMapper::toDomain);
     }
 
     @Override
@@ -52,7 +48,7 @@ public class JpaAlbumRepository implements AlbumGateway {
     Optional<AlbumEntity> albumEntity = springDataRepository.findById(id);
     albumEntity.ifPresent(entity -> {
             entity.setName(name);
-            entity.getImagens().add(imageMapper.toEntity(imagem));
+            entity.getImagens().add(ImageMapper.toEntity(imagem));
             springDataRepository.save(entity);
         });
         return Optional.empty();
