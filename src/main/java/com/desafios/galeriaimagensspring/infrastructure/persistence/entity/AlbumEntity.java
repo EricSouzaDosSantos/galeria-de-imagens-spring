@@ -16,7 +16,7 @@ public class AlbumEntity {
     @Column(nullable = false)
     private String name;
 
-    @ManyToMany(mappedBy = "album", cascade = CascadeType.ALL)
+    @ManyToMany(mappedBy = "albums", cascade = CascadeType.ALL)
     private List<ImagemEntity> imagens;
 
     @ManyToOne
