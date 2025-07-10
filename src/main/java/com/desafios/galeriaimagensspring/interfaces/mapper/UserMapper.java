@@ -6,61 +6,70 @@ import com.desafios.galeriaimagensspring.core.model.User;
 import com.desafios.galeriaimagensspring.infrastructure.persistence.entity.AlbumEntity;
 import com.desafios.galeriaimagensspring.infrastructure.persistence.entity.ImagemEntity;
 import com.desafios.galeriaimagensspring.infrastructure.persistence.entity.UserEntity;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.Named;
-
 import java.util.List;
 
-@Mapper(componentModel = "spring", uses = {ImageMapper.class, AlbumMapper.class})
-public interface UserMapper {
-    UserEntity toEntity(User user);
-    User toDomain(UserEntity entity);
+public class UserMapper {
 
-    @Named("toEntitySummary")
-    @Mapping(target = "albums", ignore = true)
-    @Mapping(target = "imagens", ignore = true)
-    UserEntity toEntitySummary(User user);
+    public static UserEntity toEntitySummary(User user) {
+        if (user == null) {
+            return null;
+        }
+        UserEntity entity = new UserEntity();
+        entity.setId(user.id());
+        entity.setEmail(user.email());
+        entity.setPassword(user.password());
+        entity.setUserRole(user.userRole());
+        return entity;
+    }
 
-    @Named("toDomainSummary")
-    @Mapping(target = "albums", ignore = true)
-    @Mapping(target = "imagens", ignore = true)
-    User toDomainSummary(UserEntity entity);
+    public static User toDomainSummary(UserEntity entity) {
+        if (entity == null) {
+            return null;
+        }
+        return new User(
+                entity.getId(),
+                entity.getEmail(),
+                entity.getPassword(),
+                entity.getUserRole(),
+                null,
+                null
+        );
+    }
 
-//    public static UserEntity toEntity(user user) {
-//        List<AlbumEntity> albumList = user.albums()
-//                .stream()
-//                .map(AlbumMapper::toEntity)
-//                .toList();
-//        List<ImagemEntity> imageList = user.imagens()
-//                .stream()
-//                .map(ImageMapper::toEntity)
-//                .toList();
-//        UserEntity entity = new UserEntity();
-//        entity.setId(user.id());
-//        entity.setEmail(user.email());
-//        entity.setPassword(user.password());
-//        entity.setUserRole(user.userRole());
-//        entity.setAlbuns(albumList);
-//        entity.setImagens(imageList);
-//        return entity;
-//    }
-//
-//    public static user toDomain(UserEntity entity) {
-//        List<Albums> albumList = entity.getAlbuns()
-//                .stream()
-//                .map(AlbumMapper::toDomain)
-//                .toList();
-//        List<Imagem> imageList = entity.getImagens()
-//                .stream()
-//                .map(ImageMapper::toDomain)
-//                .toList();
-//        return new user(
-//                entity.getId(),
-//                entity.getEmail(),
-//                entity.getPassword(),
-//                entity.getUserRole(),
-//                imageList,
-//                albumList);
-//    }
+    public static UserEntity toEntity(User user) {
+        List<AlbumEntity> albumList = user.albums()
+                .stream()
+                .map(AlbumMapper::toEntity)
+                .toList();
+        List<ImagemEntity> imageList = user.imagens()
+                .stream()
+                .map(ImageMapper::toEntity)
+                .toList();
+        UserEntity entity = new UserEntity();
+        entity.setId(user.id());
+        entity.setEmail(user.email());
+        entity.setPassword(user.password());
+        entity.setUserRole(user.userRole());
+        entity.setAlbums(albumList);
+        entity.setImagens(imageList);
+        return entity;
+    }
+
+    public static User toDomain(UserEntity entity) {
+        List<Albums> albumList = entity.getAlbums()
+                .stream()
+                .map(AlbumMapper::toDomain)
+                .toList();
+        List<Imagem> imageList = entity.getImagens()
+                .stream()
+                .map(ImageMapper::toDomain)
+                .toList();
+        return new User(
+                entity.getId(),
+                entity.getEmail(),
+                entity.getPassword(),
+                entity.getUserRole(),
+                imageList,
+                albumList);
+    }
 }
