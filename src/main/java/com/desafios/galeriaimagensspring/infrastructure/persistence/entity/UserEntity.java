@@ -34,5 +34,5 @@ public class UserEntity {
     private List<ImagemEntity> imagens;
 
     @OneToMany(mappedBy = "user")
-    private List<AlbumEntity> albuns;
+    private List<AlbumEntity> albums;
 }

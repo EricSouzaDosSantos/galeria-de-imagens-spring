@@ -36,7 +36,7 @@ public class ImagemEntity {
     @JoinTable(name = "album_images",
             joinColumns = @JoinColumn(name = "image_id"),
             inverseJoinColumns = @JoinColumn(name = "album_id"))
-    private List<AlbumEntity> album;
+    private List<AlbumEntity> albums;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
