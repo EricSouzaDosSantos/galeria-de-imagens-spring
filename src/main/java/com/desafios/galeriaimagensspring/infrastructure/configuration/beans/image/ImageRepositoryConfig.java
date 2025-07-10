@@ -16,9 +16,7 @@ import org.springframework.context.annotation.Configuration;
 public class ImageRepositoryConfig {
 
     @Bean
-    public JpaImageRepository jpaImageRepository(SpringDataImageRepository springDataImageRepository,
-                                                 ImageMapper imageMapper) {
-        return new JpaImageRepository(springDataImageRepository,
-                imageMapper);
+    public JpaImageRepository jpaImageRepository(SpringDataImageRepository springDataImageRepository) {
+        return new JpaImageRepository(springDataImageRepository);
     }
 }

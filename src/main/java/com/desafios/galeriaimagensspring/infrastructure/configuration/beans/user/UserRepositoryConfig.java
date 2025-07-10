@@ -10,8 +10,7 @@ import org.springframework.context.annotation.Configuration;
 public class UserRepositoryConfig {
 
     @Bean
-    public JpaUserRepository jpaUserRepository(SpringDataUserRepository springDataUserRepository,
-                                               UserMapper userMapper) {
-        return new JpaUserRepository(springDataUserRepository, userMapper);
+    public JpaUserRepository jpaUserRepository(SpringDataUserRepository springDataUserRepository) {
+        return new JpaUserRepository(springDataUserRepository);
     }
 }
