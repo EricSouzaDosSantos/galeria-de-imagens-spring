@@ -25,7 +25,12 @@ public class SecurityConfiguration {
             "/auth/reset-password",
             "/auth/verify-email",
             "/auth/verify-email/{token}",
+            "/swagger-ui/**",
+            "/v3/api-docs/**",
+            "/swagger-resources/**",
+            "/webjars/**"
     };
+
 
     public static final String[] ENDPOINTS_WITH_AUTHENTICATION_REQUIRED = {
             "/api/v1/images/**",
