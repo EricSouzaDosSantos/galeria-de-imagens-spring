@@ -29,10 +29,8 @@ public class UserAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-
         if (checkIfEndpointIsNotPublic(request)){
             String token = recoveryToken(request);
-
             if (token != null){
                 String subject = jwtTokenService.getSubjectFromToken(token);
                 User user = userGateway.findByEmail(subject).get();
@@ -54,16 +52,19 @@ public class UserAuthenticationFilter extends OncePerRequestFilter {
         String token = request.getHeader("Authorization");
         if (token != null) {
             return token.replace("Bearer ", "").trim();
-        }else {
-            throw new RuntimeException("Malformed JWT token");
         }
-
+        return null;
 //        throw new RuntimeException("Authorization header is missing or invalid");
 //        return null;
     }
 
-    private boolean checkIfEndpointIsNotPublic(HttpServletRequest request){
+    private boolean checkIfEndpointIsNotPublic(HttpServletRequest request) {
         String requestURI = request.getRequestURI();
-        return !Arrays.asList(SecurityConfiguration.ENDPOINTS_WITH_AUTHENTICATION_NOT_REQUIRED).contains(requestURI);
+
+        return Arrays.stream(SecurityConfiguration.ENDPOINTS_WITH_AUTHENTICATION_NOT_REQUIRED)
+                .noneMatch(pattern -> new org.springframework.util.AntPathMatcher().match(pattern, requestURI));
     }
+
+
+
 }

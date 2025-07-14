@@ -7,6 +7,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -25,11 +26,18 @@ public class SecurityConfiguration {
             "/auth/reset-password",
             "/auth/verify-email",
             "/auth/verify-email/{token}",
+            "/swagger-ui.html",
             "/swagger-ui/**",
+            "/docs",
+            "/api-docs",
             "/v3/api-docs/**",
             "/swagger-resources/**",
+            "/configuration/ui",
+            "/configuration/security",
             "/webjars/**"
     };
+
+
 
 
     public static final String[] ENDPOINTS_WITH_AUTHENTICATION_REQUIRED = {
@@ -48,11 +56,12 @@ public class SecurityConfiguration {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity, UserAuthenticationFilter userAuthenticationFilter) throws Exception{
 
-        httpSecurity.csrf( csrf -> csrf.disable())
+        httpSecurity.csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth ->
-                        auth.requestMatchers(ENDPOINTS_WITH_AUTHENTICATION_NOT_REQUIRED).permitAll()
-                                .requestMatchers(ENDPOINTS_WITH_AUTHENTICATION_REQUIRED).authenticated()
+                        auth
+                                .requestMatchers(ENDPOINTS_WITH_AUTHENTICATION_NOT_REQUIRED).permitAll()
+//                                .requestMatchers(ENDPOINTS_WITH_AUTHENTICATION_REQUIRED).authenticated()
 //                                .requestMatchers(ENDPOINTS_VIEWER).hasAnyRole("VIEWER")
 //                                .requestMatchers(ENDPOINTS_USER).hasAnyRole("USER")
                         .anyRequest().authenticated()
